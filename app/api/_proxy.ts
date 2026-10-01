@@ -4,13 +4,23 @@ const API_BASE = (
   process.env.API_BASE ||
   process.env.NEXT_PUBLIC_API_BASE ||
   process.env.VITE_API_BASE ||
-  "https://0rjze2z0jh.execute-api.us-east-1.amazonaws.com/v1"
+  ""
 ).replace(/\/+$/, "");
 
 export async function proxyApiRequest(
   req: NextRequest,
   customPath?: string
 ): Promise<NextResponse> {
+  if (!API_BASE) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "API Gateway Proxy Error: NEXT_PUBLIC_API_BASE is not configured in .env.local",
+      },
+      { status: 500 }
+    );
+  }
+
   const rawPath = customPath || req.nextUrl.pathname;
   const subpath = rawPath.replace(/^\/api(\/|$)/, "/");
   const search = req.nextUrl.search;
