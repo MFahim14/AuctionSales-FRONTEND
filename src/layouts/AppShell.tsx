@@ -186,6 +186,9 @@ export function AppShell({ children }: { children?: ReactNode } = {}) {
         />
       ) : null}
       <main className="relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
+        {/* Subtle Ambient Spherical Glows for Authentic Glass Refraction (Matches Reference Image) */}
+        <div className="pointer-events-none fixed bottom-0 right-0 z-0 h-[480px] w-[480px] rounded-full bg-gradient-to-tr from-accent/15 via-orange-400/10 to-pink-400/10 blur-[100px] dark:from-accent/8 dark:via-purple-500/5 dark:to-transparent dark:blur-[130px]" aria-hidden="true" />
+
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-hairline bg-canvas/95 px-3 backdrop-blur-md lg:hidden">
           <div className="flex min-w-0 items-center gap-2">
             <button

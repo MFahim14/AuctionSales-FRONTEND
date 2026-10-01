@@ -54,7 +54,7 @@ const CopilotVehicleCarousel: React.FC<CopilotVehicleCarouselProps> = ({ vehicle
 
   return (
     <div
-      className="mt-2.5 -mx-1 flex w-[calc(100%+8px)] gap-3.5 overflow-x-auto pb-3 pt-1 px-1 scroll-smooth scrollbar-thin select-none"
+      className="mt-2.5 -mx-1 flex w-[calc(100%+8px)] gap-3.5 overflow-x-auto pb-3 pt-1 px-1 scroll-smooth select-none [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.18)_transparent] dark:[scrollbar-color:rgba(255,255,255,0.22)_transparent]"
       style={{ scrollSnapType: "x mandatory" }}
     >
       {vehicles.map((v) => (
@@ -254,32 +254,37 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
         <div
           role="region"
           aria-label="FairScout.AI Messenger"
-          className={`relative mb-3 flex ${currentWidthClass} h-[520px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-[24px] border border-black/[0.08] dark:border-white/20 border-t-white dark:border-t-white/40 animate-in fade-in slide-in-from-bottom-5 duration-300 transition-[width] ease-out select-text`}
+          className={`relative mb-3 flex ${currentWidthClass} h-[520px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-[26px] border animate-in fade-in slide-in-from-bottom-5 duration-300 transition-all ease-out select-text text-[#141413] dark:text-[#f7f6f2]`}
           style={{
-            backgroundColor: "color-mix(in srgb, var(--surface) 72%, transparent)",
-            borderColor: "color-mix(in srgb, var(--hairline) 60%, transparent)",
-            backdropFilter: "blur(36px) saturate(210%)",
-            WebkitBackdropFilter: "blur(36px) saturate(210%)",
-            boxShadow:
-              "inset 0 1.5px 0 0 rgba(255, 255, 255, 0.85), inset 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 -1px 0 0 rgba(0, 0, 0, 0.08), 0 32px 64px -16px rgba(0, 0, 0, 0.28), 0 16px 32px -8px rgba(0, 0, 0, 0.16)",
+            background: "var(--glass-drawer-bg)",
+            backdropFilter: "var(--glass-drawer-blur, blur(52px) saturate(210%))",
+            WebkitBackdropFilter: "var(--glass-drawer-blur, blur(52px) saturate(210%))",
+            boxShadow: "var(--glass-drawer-shadow, var(--glass-shadow))",
+            border: "var(--glass-drawer-border)",
             color: "var(--ink)",
+            transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease",
           }}
         >
-          {/* Subtle Ambient Radial Lighting Layer for realistic glass refraction */}
+          {/* Optical Glare & Specular Refraction Overlay */}
           <div
-            className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-white/[0.08] via-transparent to-black/[0.05] dark:from-white/[0.05] dark:to-black/50"
+            className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-500 opacity-90 dark:opacity-40"
+            style={{
+              background: "var(--glass-drawer-glare)",
+            }}
             aria-hidden="true"
           />
 
           {/* Header Bar */}
           <div
-            className="relative z-20 flex shrink-0 items-center justify-between border-b border-black/[0.06] dark:border-white/10 px-3.5 py-2.5 backdrop-blur-md"
+            className="relative z-20 flex shrink-0 items-center justify-between border-b px-3.5 py-2.5 transition-all duration-300"
             style={{
-              backgroundColor: "color-mix(in srgb, var(--surface) 50%, transparent)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-              boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.6)",
+              backgroundColor: "var(--glass-header-bg)",
+              borderColor: "var(--glass-border-hairline)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              boxShadow: "inset 0 1px 0 0 var(--glass-highlight)",
               color: "var(--ink)",
+              transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {/* Header Brand: Dropdown vs Simple Clean Label */}
@@ -322,12 +327,11 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
                     onClick={(e) => e.stopPropagation()}
                     className="absolute left-0 top-full mt-1.5 w-64 max-h-72 overflow-y-auto rounded-2xl border p-1.5 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150 scrollbar-thin"
                     style={{
-                      backgroundColor: "color-mix(in srgb, var(--surface) 80%, transparent)",
-                      borderColor: "color-mix(in srgb, var(--hairline) 70%, transparent)",
-                      backdropFilter: "blur(36px) saturate(210%)",
-                      WebkitBackdropFilter: "blur(36px) saturate(210%)",
-                      boxShadow:
-                        "inset 0 1px 0 0 rgba(255, 255, 255, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 24px 60px -12px rgba(0, 0, 0, 0.4)",
+                      backgroundColor: "var(--glass-drawer-bg)",
+                      borderColor: "var(--glass-border)",
+                      backdropFilter: "blur(28px) saturate(190%)",
+                      WebkitBackdropFilter: "blur(28px) saturate(190%)",
+                      boxShadow: "var(--glass-shadow)",
                       color: "var(--ink)",
                     }}
                   >
@@ -464,21 +468,25 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
               messages.map((msg) =>
                 msg.role === "user" ? (
                   <div key={msg.id} className="flex flex-col items-end gap-1">
-                    {/* User Message Bubble: Pure Ultra Glassmorphism */}
+                    {/* User Message Bubble: Option 4 Peach Prismatic in Light Mode, Smoked Glass in Dark Mode */}
                     <div
-                      className="max-w-[86%] px-4 py-2.5 text-xs leading-relaxed rounded-[20px] rounded-br-[4px] border border-black/[0.09] dark:border-white/25 border-t-white dark:border-t-white/40 text-ink dark:text-[#f7f6f2] bg-white/80 dark:bg-white/[0.065] shadow-[0_4px_16px_-2px_rgba(0,0,0,0.06),inset_0_1px_0_0_rgba(255,255,255,0.95)] dark:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.35)]"
+                      className="max-w-[86%] px-4 py-2.5 text-xs leading-relaxed rounded-[20px] rounded-br-[4px] border transition-all duration-300"
                       style={{
-                        backdropFilter: "blur(36px) saturate(200%)",
-                        WebkitBackdropFilter: "blur(36px) saturate(200%)",
+                        background: "var(--glass-user-bubble-bg)",
+                        border: "var(--glass-user-bubble-border)",
+                        boxShadow: "var(--glass-user-bubble-shadow)",
+                        color: "var(--ink)",
+                        backdropFilter: "blur(24px) saturate(190%)",
+                        WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                        transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease",
                       }}
                     >
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                      <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
                     </div>
 
                     {/* User Receipt */}
                     <span
-                      className="mr-1 text-[10px] tabular-nums"
-                      style={{ color: "var(--muted)" }}
+                      className="mr-1 text-[10px] tabular-nums font-medium text-[#64748b] dark:text-[#94a3b8]"
                     >
                       You • {formatRelativeTime(msg.timestamp)}
                     </span>
@@ -487,8 +495,7 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
                   <div key={msg.id} className="flex flex-col items-start gap-1.5 w-full">
                     {/* Agent Header Row matching POC */}
                     <div
-                      className="flex items-center gap-1.5 px-0.5 text-[11px] font-medium"
-                      style={{ color: "var(--muted)" }}
+                      className="flex items-center gap-1.5 px-0.5 text-[11px] font-semibold text-[#475569] dark:text-[#94a3b8]"
                     >
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] shrink-0" />
                       <span>FairScout.AI • {formatRelativeTime(msg.timestamp)}</span>
@@ -496,13 +503,18 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
 
                     {/* Agent Message Prose Bubble: Pure Frosted Glassmorphism */}
                     <div
-                      className="max-w-[92%] px-4 py-3 text-xs leading-relaxed rounded-[20px] rounded-tl-[4px] border border-black/[0.08] dark:border-white/20 border-t-white dark:border-t-white/35 text-ink dark:text-[#f7f6f2] bg-white/75 dark:bg-white/[0.045] shadow-[0_6px_20px_-3px_rgba(0,0,0,0.05),inset_0_1px_0_0_rgba(255,255,255,0.95)] dark:shadow-[0_12px_30px_-6px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.32)]"
+                      className="max-w-[92%] px-4 py-3 text-xs leading-relaxed rounded-[20px] rounded-tl-[4px] border transition-all duration-300"
                       style={{
-                        backdropFilter: "blur(36px) saturate(200%)",
-                        WebkitBackdropFilter: "blur(36px) saturate(200%)",
+                        background: "var(--glass-card-bg)",
+                        border: "var(--glass-card-border)",
+                        boxShadow: "var(--glass-card-shadow)",
+                        color: "var(--ink)",
+                        backdropFilter: "blur(24px) saturate(190%)",
+                        WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                        transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease",
                       }}
                     >
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                      <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
                     </div>
 
                     {/* Curated Horizontal Snap Carousel: Clicking any title expands/collapses all cards in sync */}
@@ -543,15 +555,15 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
             setIsExpanded(true);
             if (onOpen) onOpen();
           }}
-          className="flex items-center justify-between gap-3.5 rounded-full border px-4 py-2.5 transition-all cursor-pointer group select-none min-w-[240px]"
+          className="flex items-center justify-between gap-3.5 rounded-full border px-4 py-2.5 transition-all duration-300 cursor-pointer group select-none min-w-[240px]"
           style={{
-            backgroundColor: "color-mix(in srgb, var(--surface) 68%, transparent)",
-            borderColor: "color-mix(in srgb, var(--hairline) 60%, transparent)",
-            backdropFilter: "blur(30px) saturate(200%)",
-            WebkitBackdropFilter: "blur(30px) saturate(200%)",
-            boxShadow:
-              "inset 0 1px 0 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 14px 40px -8px rgba(0, 0, 0, 0.2)",
+            background: "var(--glass-pill-bg)",
+            border: "var(--glass-pill-border)",
+            backdropFilter: "blur(28px) saturate(190%)",
+            WebkitBackdropFilter: "blur(28px) saturate(190%)",
+            boxShadow: "var(--glass-pill-shadow)",
             color: "var(--ink)",
+            transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease",
           }}
         >
           <div className="flex items-center gap-2.5">
@@ -587,15 +599,14 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
           <div
             className="relative flex items-center overflow-hidden rounded-full border pl-4 pr-1.5 py-1 transition-all duration-300"
             style={{
-              backgroundColor: "color-mix(in srgb, var(--surface) 68%, transparent)",
-              borderColor: isFocused
-                ? "var(--accent)"
-                : "color-mix(in srgb, var(--hairline) 60%, transparent)",
-              backdropFilter: "blur(30px) saturate(200%)",
-              WebkitBackdropFilter: "blur(30px) saturate(200%)",
+              background: "var(--glass-pill-bg)",
+              border: "var(--glass-pill-border)",
+              backdropFilter: "blur(28px) saturate(190%)",
+              WebkitBackdropFilter: "blur(28px) saturate(190%)",
               boxShadow: isFocused
-                ? "inset 0 1px 0 0 rgba(255, 255, 255, 0.55), 0 0 0 1.5px var(--accent), 0 18px 48px -4px rgba(196, 103, 58, 0.32)"
-                : "inset 0 1px 0 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 14px 40px -8px rgba(0, 0, 0, 0.2)",
+                ? "var(--glass-pill-shadow-focus)"
+                : "var(--glass-pill-shadow)",
+              transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease",
             }}
           >
             {/* Direct Input Field: Pure styling without any rectangle or border outline */}
@@ -613,20 +624,19 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
                   outline: "none",
                   boxShadow: "none",
                   border: "none",
-                  color: "var(--ink)",
                 }}
-                className="w-full resize-none bg-transparent py-1.5 text-xs placeholder:text-muted/65 focus:outline-none focus:ring-0 focus:border-0 border-0 outline-none ring-0 shadow-none leading-relaxed"
+                className="w-full resize-none bg-transparent py-1.5 text-xs text-[#141413] dark:text-[#f7f6f2] placeholder:text-[#64748b]/80 dark:placeholder:text-[#94a3b8]/60 focus:outline-none focus:ring-0 focus:border-0 border-0 outline-none ring-0 shadow-none leading-relaxed font-normal"
               />
             </div>
 
-            {/* Top Arrow Submit Button: Clicking opens the answer chat area and submits */}
+            {/* Top Arrow Submit Button: Glassmorphic depth with subtle bevels and shadow */}
             <div className="shrink-0 ml-1.5">
               <button
                 type="submit"
-                className={`flex h-7 w-7 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer ${
+                className={`flex h-7 w-7 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer border ${
                   input.trim().length > 0
-                    ? "bg-accent text-white shadow-[0_4px_16px_rgba(196,103,58,0.45)] ring-1 ring-white/35 scale-105"
-                    : "bg-black/5 dark:bg-white/10 text-muted hover:text-ink hover:bg-black/10 dark:hover:bg-white/20"
+                    ? "bg-accent/90 dark:bg-accent/85 border-white/60 dark:border-white/25 text-white shadow-[0_4px_12px_rgba(15,23,42,0.18),inset_0_1px_0_rgba(255,255,255,0.7)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.4)] scale-105"
+                    : "bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] border-black/[0.06] dark:border-white/10 text-muted hover:text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]"
                 }`}
                 title="Send message"
               >

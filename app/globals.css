@@ -1,6 +1,27 @@
 @import "tailwindcss";
 @import "../src/theme/tokens.css";
 
+@theme inline {
+  --font-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: "IBM Plex Sans", "Anthropic Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-scrim: var(--scrim);
+  --radius-card: 8px;
+  --radius-chip: 6px;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
 html,
 body {
   height: 100%;
@@ -15,6 +36,7 @@ body {
   font-size: 15px;
   line-height: 24px;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease;
 }
 
 h1,

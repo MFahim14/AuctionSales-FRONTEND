@@ -201,13 +201,16 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   return (
     <>
       <article
-        className="group relative flex flex-col shrink-0 w-[320px] overflow-hidden rounded-2xl border border-black/[0.09] dark:border-white/20 border-t-white dark:border-t-white/40 transition-all duration-300 text-left select-none shadow-[0_12px_36px_-8px_rgba(0,0,0,0.08),0_2px_8px_-2px_rgba(0,0,0,0.04),inset_0_1.5px_0_0_rgba(255,255,255,0.95)] dark:shadow-[0_24px_55px_-10px_rgba(0,0,0,0.85),inset_0_1px_0_0_rgba(255,255,255,0.42)] hover:-translate-y-0.5 hover:shadow-[0_18px_42px_-6px_rgba(0,0,0,0.12),inset_0_1.5px_0_0_rgba(255,255,255,1)] dark:hover:shadow-[0_28px_60px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_0_rgba(255,255,255,0.55)]"
+        className="group relative flex flex-col shrink-0 w-[320px] overflow-hidden rounded-2xl border transition-all duration-300 text-left select-none text-[#141413] dark:text-[#f7f6f2] hover:-translate-y-0.5"
         style={{
-          backgroundColor: "color-mix(in srgb, var(--surface) 82%, transparent)",
-          backdropFilter: "blur(36px) saturate(210%)",
-          WebkitBackdropFilter: "blur(36px) saturate(210%)",
+          background: "var(--glass-card-bg)",
+          border: "var(--glass-card-border)",
+          backdropFilter: "blur(28px) saturate(190%)",
+          WebkitBackdropFilter: "blur(28px) saturate(190%)",
+          boxShadow: "var(--glass-card-shadow)",
           color: "var(--ink)",
           scrollSnapAlign: "start",
+          transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease, transform 0.25s ease",
         }}
       >
         {/* ======================================================== */}
@@ -215,11 +218,11 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         {/* ======================================================== */}
         <header
           onClick={toggleExpand}
-          className="flex flex-col gap-0.5 px-3.5 py-2.5 border-b border-black/[0.07] dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer select-none"
+          className="flex flex-col gap-0.5 px-3.5 py-2.5 border-b border-black/[0.06] dark:border-white/10 bg-white/25 dark:bg-white/[0.02] hover:bg-white/40 dark:hover:bg-white/[0.06] transition-colors cursor-pointer select-none"
         >
           <div className="flex items-center justify-between gap-2">
             <h4
-              className="truncate text-[13px] font-bold tracking-tight text-ink dark:text-white"
+              className="truncate text-[13px] font-bold tracking-tight text-[#141413] dark:text-[#f7f6f2]"
               title={makeModel}
             >
               {makeModel}
@@ -232,7 +235,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                   to={inventoryHref}
                   onClick={() => markChatNavigating()}
                   aria-label={`View ${makeModel} in inventory`}
-                  className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.18] border border-black/10 dark:border-white/20 hover:border-black/20 dark:hover:border-white/40 text-ink dark:text-[#f7f6f2] hover:text-ink dark:hover:text-white transition-all shadow-xs cursor-pointer"
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.18] border border-black/10 dark:border-white/20 hover:border-black/20 dark:hover:border-white/40 text-[#141413] dark:text-[#f7f6f2] hover:text-black dark:hover:text-white transition-all shadow-xs cursor-pointer"
                   style={{
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
@@ -281,7 +284,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
           </div>
 
           {/* Subtitle: Same font, single row */}
-          <p className="truncate text-[11.5px] font-medium text-muted dark:text-[#9da3b4] tracking-tight">
+          <p className="truncate text-[11.5px] font-medium text-[#475569] dark:text-[#9da3b4] tracking-tight">
             {trimSubtitle}
           </p>
         </header>
@@ -377,7 +380,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
           <div className="flex flex-col border-t border-black/[0.07] dark:border-white/10 animate-in fade-in duration-200">
             {/* Circular Edge Glass Tabs Bar (Overview | Salvage | Condition) */}
             <div className="px-3 pt-2.5 pb-1">
-              <div className="flex items-center gap-1 p-1 rounded-full border border-black/[0.07] dark:border-white/10 bg-black/[0.04] dark:bg-black/35 backdrop-blur-md shadow-inner">
+              <div className="flex items-center gap-1 p-1 rounded-full border border-black/[0.06] dark:border-white/10 bg-black/[0.03] dark:bg-black/35 backdrop-blur-md shadow-inner">
                 {(["overview", "salvage", "condition"] as const).map((tabKey) => {
                   const isActive = activeTab === tabKey;
                   return (
@@ -387,8 +390,8 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                       onClick={() => setActiveTab(tabKey)}
                       className={`flex-1 py-1.5 px-3 rounded-full text-[11px] font-medium transition-all capitalize cursor-pointer text-center ${
                         isActive
-                          ? "bg-white/95 dark:bg-white/[0.18] text-ink dark:text-white font-semibold border border-black/10 dark:border-white/25 shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.45)]"
-                          : "text-muted dark:text-[#9ba1b2] hover:text-ink dark:hover:text-white hover:bg-black/[0.025] dark:hover:bg-white/[0.06]"
+                          ? "bg-white/80 dark:bg-white/[0.18] text-[#141413] dark:text-white font-semibold border border-white/85 dark:border-white/25 shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.45)]"
+                          : "text-[#64748b] dark:text-[#9ba1b2] hover:text-[#141413] dark:hover:text-white hover:bg-black/[0.025] dark:hover:bg-white/[0.06]"
                       }`}
                       style={
                         isActive
@@ -411,24 +414,24 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
               {activeTab === "overview" && (
                 <>
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">
                       {vehicle.hasActiveBids ? "Current Bid" : "Opening Bid"}
                     </span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       ${bid.toLocaleString()} {vehicle.hasActiveBids === false ? "(Pre-Bid)" : ""}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Est. ACV</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Est. ACV</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       ${acv.toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Arbitrage Spread</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Arbitrage Spread</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {calculatedSpread > 0
                         ? `+$${calculatedSpread.toLocaleString()} (${spreadPct})`
                         : "N/A"}
@@ -436,9 +439,9 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between gap-2 text-[11.5px]">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5] shrink-0">Date & Yard</span>
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5] shrink-0">Date & Yard</span>
                     <span
-                      className="font-semibold text-ink dark:text-[#f7f6f2] text-right truncate text-[11px]"
+                      className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right truncate text-[11px]"
                       title={`${vehicle.auctionDate || vehicle.auctionDateTime || "Upcoming"} • ${vehicle.branch || vehicle.location || "Online"}`}
                     >
                       {formatCrispAuctionDateTime(vehicle.auctionDate, vehicle.auctionTime, vehicle.auctionDateTime)} • {formatCrispYard(vehicle.branch || vehicle.location)}
@@ -450,29 +453,29 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
               {activeTab === "salvage" && (
                 <>
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Primary Damage</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Primary Damage</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {vehicle.primaryDamage || "Normal Wear"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Secondary Damage</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Secondary Damage</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {vehicle.secondaryDamage || "None"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Title / Document</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right truncate max-w-[170px]" title={vehicle.titleDoc || vehicle.titleType || "Salvage Certificate"}>
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Title / Document</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right truncate max-w-[170px]" title={vehicle.titleDoc || vehicle.titleType || "Salvage Certificate"}>
                       {vehicle.titleDoc || vehicle.titleType || "Salvage Certificate"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px]">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Loss & Seller Type</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right truncate max-w-[170px]" title={`${vehicle.lossType || "Collision"} • ${vehicle.sellerType || "Insurance Co"}`}>
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Loss & Seller Type</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right truncate max-w-[170px]" title={`${vehicle.lossType || "Collision"} • ${vehicle.sellerType || "Insurance Co"}`}>
                       {vehicle.lossType || "Collision"} • {vehicle.sellerType || "Insurance Co"}
                     </span>
                   </div>
@@ -482,22 +485,22 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
               {activeTab === "condition" && (
                 <>
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Score</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Score</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {vehicle.vehicleScore || vehicle.score || 50} / 50
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Start Code & Key</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Start Code & Key</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {vehicle.startCode || vehicle.startStatus || "Run & Drive"} • {vehicle.keyStatus || "Key Present"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Odometer</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Odometer</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {typeof vehicle.odometer === "number"
                         ? `${vehicle.odometer.toLocaleString()} mi`
                         : vehicle.odometer || "Verified Low"}
@@ -505,8 +508,8 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px]">
-                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Airbags</span>
-                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-[#64748b] dark:text-[#8e94a5]">Airbags</span>
+                    <span className="font-semibold text-[#141413] dark:text-[#f7f6f2] text-right">
                       {vehicle.airbags || "Intact (Not Deployed)"}
                     </span>
                   </div>
@@ -519,10 +522,10 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
               <Link
                 to={inventoryHref}
                 onClick={() => markChatNavigating()}
-                className="group/btn relative flex items-center justify-center gap-2 w-full py-2.5 px-5 rounded-full text-xs font-semibold text-ink dark:text-[#f7f6f2] hover:text-ink dark:hover:text-white transition-all cursor-pointer whitespace-nowrap overflow-hidden border border-black/10 dark:border-white/16 border-t-white dark:border-t-white/35 bg-white/80 dark:bg-white/[0.06] hover:bg-white/95 dark:hover:bg-white/[0.12] shadow-[0_4px_14px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)] dark:shadow-[0_4px_14px_rgba(0,0,0,0.40),inset_0_1px_0_rgba(255,255,255,0.40)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,1)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.60)] active:scale-[0.99]"
+                className="group/btn relative flex items-center justify-center gap-2 w-full py-2.5 px-5 rounded-full text-xs font-semibold text-[#141413] dark:text-[#f7f6f2] hover:text-black dark:hover:text-white transition-all cursor-pointer whitespace-nowrap overflow-hidden border border-white/80 dark:border-white/20 border-t-white dark:border-t-white/40 bg-white/70 dark:bg-white/[0.08] hover:bg-white/90 dark:hover:bg-white/[0.15] shadow-[0_4px_14px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:shadow-[0_4px_14px_rgba(0,0,0,0.40),inset_0_1px_0_rgba(255,255,255,0.35)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,1)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.50)] active:scale-[0.99]"
                 style={{
-                  backdropFilter: "blur(28px) saturate(200%)",
-                  WebkitBackdropFilter: "blur(28px) saturate(200%)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
                 }}
               >
                 <span className="relative z-10">View Details</span>
