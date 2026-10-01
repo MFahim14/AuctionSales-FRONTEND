@@ -1,0 +1,51 @@
+:root,
+[data-theme="light"] {
+  --canvas: #faf9f5;
+  --surface: #ffffff;
+  --surface-muted: #f5f0e8;
+  --ink: #141413;
+  --muted: #6b5f4e;
+  --hairline: #e6dfd8;
+  --accent: #c4673a;
+  --accent-hover: #b35a32;
+  --danger: #b42318;
+  --warning: #b54708;
+  --success: #067647;
+  --scrim: rgba(28, 22, 16, 0.48);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --canvas: #0b0b0b;
+  --surface: #1e1e1e;
+  --surface-muted: #161616;
+  --ink: #f5f0e8;
+  --muted: #98989d;
+  --hairline: #2a2a28;
+  --accent: #d97757;
+  --accent-hover: #e0896a;
+  --danger: #f97066;
+  --warning: #fdb022;
+  --success: #75e0a7;
+  --scrim: rgba(6, 5, 4, 0.62);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: "IBM Plex Sans", "Anthropic Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-scrim: var(--scrim);
+  --radius-card: 8px;
+  --radius-chip: 6px;
+}

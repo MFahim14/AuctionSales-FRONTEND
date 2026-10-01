@@ -1,0 +1,32 @@
+import { describe, expect, it } from "vitest";
+import { DISPLAY_TOPICS, formatFactLine, visibleTopics } from "./displayTopics";
+import { DEFAULT_CARD_FIELDS } from "./cardFields";
+
+describe("display topics", () => {
+  it("keeps Vehicle even when no vehicle fields are selected", () => {
+    const topics = visibleTopics(["odometer"]);
+    expect(topics.map((topic) => topic.id)).toEqual(["vehicle", "condition"]);
+    expect(topics[0].fields).toEqual([]);
+  });
+
+  it("shows Build when a build field is on", () => {
+    const topics = visibleTopics([...DEFAULT_CARD_FIELDS]);
+    expect(topics.map((topic) => topic.id)).toEqual(["vehicle", "condition", "build", "sale", "auction"]);
+    expect(topics.find((topic) => topic.id === "build")?.fields).toEqual(["engine", "fuelType", "vin"]);
+  });
+
+  it("labels Stock # and Buy now", () => {
+    expect(formatFactLine({ stockNumber: "46130172" }, "stockNumber")).toBe("Stock #: 46130172");
+    expect(formatFactLine({ stockNumber: "1", buyNowPrice: 1200 }, "buyNowPrice")).toBe("Buy now $1,200");
+  });
+
+  it("covers five IAAI topic groups", () => {
+    expect(DISPLAY_TOPICS.map((topic) => topic.label)).toEqual([
+      "Vehicle",
+      "Condition",
+      "Build data",
+      "Sale info",
+      "Auction",
+    ]);
+  });
+});
