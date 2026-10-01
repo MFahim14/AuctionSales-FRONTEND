@@ -50,7 +50,7 @@ function formatRelativeTime(timestamp: number): string {
  *      - Or run in browser console: localStorage.setItem('enable_copilot', 'true')
  * ============================================================================
  */
-export const HIDE_COPILOT = true;
+export const HIDE_COPILOT = false;
 
 export function isCopilotVisible(): boolean {
   if (typeof window !== "undefined") {
