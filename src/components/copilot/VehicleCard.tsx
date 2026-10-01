@@ -9,13 +9,116 @@ import { ImageGallery } from "../../features/inventory/ImageGallery";
 import { expandVisImages, type VisCandidate } from "../../features/inventory/visImages";
 import { markChatNavigating } from "./useCopilotChat";
 
+// Formats auction date & time as requested: "Tue Oct 06, 9:30am"
+export function formatCrispAuctionDateTime(dateVal?: string, timeVal?: string, dateTimeVal?: string): string {
+  const combined = dateTimeVal || dateVal || "";
+  const trimmed = combined.trim();
+  if (!trimmed || trimmed.toLowerCase().includes("upcoming")) return "Upcoming";
+
+  // 1. Strip timezone suffix like "CDT", "EDT", "PDT", "CST", "EST", "PST", "MST", "UTC", "GMT", etc.
+  const cleaned = trimmed
+    .replace(/\s+(?:CDT|EDT|PDT|MDT|CST|EST|PST|MST|UTC|GMT|[A-Z]{3,4})\s*$/i, "")
+    .trim();
+
+  // 2. Direct match for IAAI style: 'Tue Oct 06, 9:30am', 'Tue Oct 6, 9:30 AM', 'Tue Oct 06 9:30am'
+  const iaaiMatch = cleaned.match(
+    /^([A-Za-z]{3})\s+([A-Za-z]{3})\s+(\d{1,2})(?:,\s*|\s+)(\d{1,2}(?::\d{2})?)\s*([AaPp][Mm])?$/i
+  );
+  if (iaaiMatch) {
+    const [, wday, mon, day, timeDigits, ampm] = iaaiMatch;
+    const formattedDay = day.padStart(2, "0");
+    const capitalizedWday = wday.charAt(0).toUpperCase() + wday.slice(1, 3).toLowerCase();
+    const capitalizedMon = mon.charAt(0).toUpperCase() + mon.slice(1, 3).toLowerCase();
+    let timeStr = timeDigits;
+    if (ampm) {
+      timeStr = `${timeDigits}${ampm.toLowerCase()}`;
+    }
+    return `${capitalizedWday} ${capitalizedMon} ${formattedDay}, ${timeStr}`;
+  }
+
+  // 3. Match 'Day Mon DD' without time
+  const dayMonMatch = cleaned.match(/^([A-Za-z]{3})\s+([A-Za-z]{3})\s+(\d{1,2})$/i);
+  if (dayMonMatch) {
+    const [, wday, mon, day] = dayMonMatch;
+    const formattedDay = day.padStart(2, "0");
+    const capitalizedWday = wday.charAt(0).toUpperCase() + wday.slice(1, 3).toLowerCase();
+    const capitalizedMon = mon.charAt(0).toUpperCase() + mon.slice(1, 3).toLowerCase();
+    if (timeVal) {
+      const cleanTime = timeVal.trim().toLowerCase().replace(/\s+/g, "");
+      return `${capitalizedWday} ${capitalizedMon} ${formattedDay}, ${cleanTime}`;
+    }
+    return `${capitalizedWday} ${capitalizedMon} ${formattedDay}`;
+  }
+
+  // 4. Handle "Tomorrow" / "Today"
+  if (cleaned.toLowerCase().startsWith("tomorrow") || cleaned.toLowerCase().startsWith("today")) {
+    const isTomorrow = cleaned.toLowerCase().startsWith("tomorrow");
+    const target = new Date();
+    if (isTomorrow) target.setDate(target.getDate() + 1);
+    const weekday = target.toLocaleDateString("en-US", { weekday: "short" });
+    const month = target.toLocaleDateString("en-US", { month: "short" });
+    const day = String(target.getDate()).padStart(2, "0");
+    let extractedTime = timeVal ? timeVal.trim().toLowerCase().replace(/\s+/g, "") : "";
+    const timeMatch = cleaned.match(/(\d{1,2}(?::\d{2})?\s*[AaPp][Mm])/i);
+    if (!extractedTime && timeMatch) {
+      extractedTime = timeMatch[1].toLowerCase().replace(/\s+/g, "");
+    }
+    return extractedTime ? `${weekday} ${month} ${day}, ${extractedTime}` : `${weekday} ${month} ${day}`;
+  }
+
+  // 5. Standard Date parse (ISO or 'MM/DD/YYYY HH:MM AM')
+  const parsed = new Date(cleaned);
+  if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2000) {
+    const weekday = parsed.toLocaleDateString("en-US", { weekday: "short" });
+    const month = parsed.toLocaleDateString("en-US", { month: "short" });
+    const day = String(parsed.getDate()).padStart(2, "0");
+    let extractedTime = "";
+    if (cleaned.includes("T") || cleaned.includes(":") || timeVal) {
+      try {
+        const rawTime = parsed.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+        extractedTime = rawTime.replace(/\s*([AP]M)/i, (_, p) => p.toLowerCase());
+      } catch {}
+    }
+    return extractedTime ? `${weekday} ${month} ${day}, ${extractedTime}` : `${weekday} ${month} ${day}`;
+  }
+
+  return cleaned;
+}
+
+export function formatCrispYard(branchOrLocation?: string): string {
+  if (!branchOrLocation) return "Online";
+  const clean = branchOrLocation.split(",")[0].trim();
+  return clean || "Online";
+}
+
 interface VehicleCardProps {
   vehicle: MatchedVehicle;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
   onViewGallery?: (vehicle: MatchedVehicle) => void;
 }
 
-export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+export const VehicleCard: React.FC<VehicleCardProps> = ({
+  vehicle,
+  isExpanded: controlledExpanded,
+  onToggleExpand,
+  onViewGallery,
+}) => {
+  const [internalExpanded, setInternalExpanded] = useState(false);
+  const isExpanded = controlledExpanded !== undefined ? controlledExpanded : internalExpanded;
+
+  const toggleExpand = () => {
+    if (onToggleExpand) {
+      onToggleExpand();
+    } else {
+      setInternalExpanded((prev) => !prev);
+    }
+  };
+
   const [activeTab, setActiveTab] = useState<"overview" | "salvage" | "condition">("overview");
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [heartAnimating, setHeartAnimating] = useState(false);
@@ -58,8 +161,6 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
     return [];
   }, [heroImage, vehicle.imageUrls]);
 
-  const photoCount = shots.length > 0 ? shots.length : (vehicle.imageUrls?.length || (heroImage ? 1 : 0));
-
   const handleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -100,15 +201,12 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
   return (
     <>
       <article
-        className="group relative flex flex-col shrink-0 w-[304px] overflow-hidden rounded-2xl border transition-all duration-300 text-left select-none"
+        className="group relative flex flex-col shrink-0 w-[320px] overflow-hidden rounded-2xl border border-black/[0.09] dark:border-white/20 border-t-white dark:border-t-white/40 transition-all duration-300 text-left select-none shadow-[0_12px_36px_-8px_rgba(0,0,0,0.08),0_2px_8px_-2px_rgba(0,0,0,0.04),inset_0_1.5px_0_0_rgba(255,255,255,0.95)] dark:shadow-[0_24px_55px_-10px_rgba(0,0,0,0.85),inset_0_1px_0_0_rgba(255,255,255,0.42)] hover:-translate-y-0.5 hover:shadow-[0_18px_42px_-6px_rgba(0,0,0,0.12),inset_0_1.5px_0_0_rgba(255,255,255,1)] dark:hover:shadow-[0_28px_60px_-8px_rgba(0,0,0,0.95),inset_0_1px_0_0_rgba(255,255,255,0.55)]"
         style={{
-          backgroundColor: "rgba(20, 24, 36, 0.40)",
-          borderColor: "rgba(255, 255, 255, 0.20)",
-          backdropFilter: "blur(32px) saturate(210%)",
-          WebkitBackdropFilter: "blur(32px) saturate(210%)",
-          boxShadow:
-            "inset 0 1px 0 0 rgba(255, 255, 255, 0.42), inset 0 0 24px rgba(255, 255, 255, 0.02), 0 20px 48px -8px rgba(0, 0, 0, 0.75)",
-          color: "#f7f6f2",
+          backgroundColor: "color-mix(in srgb, var(--surface) 82%, transparent)",
+          backdropFilter: "blur(36px) saturate(210%)",
+          WebkitBackdropFilter: "blur(36px) saturate(210%)",
+          color: "var(--ink)",
           scrollSnapAlign: "start",
         }}
       >
@@ -116,12 +214,12 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
         {/* 1. NAME SECTION: Clickable Header (Expand / Collapse)     */}
         {/* ======================================================== */}
         <header
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="flex flex-col gap-0.5 px-3.5 py-2.5 border-b border-white/10 bg-white/[0.02] hover:bg-white/[0.06] transition-colors cursor-pointer select-none"
+          onClick={toggleExpand}
+          className="flex flex-col gap-0.5 px-3.5 py-2.5 border-b border-black/[0.07] dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer select-none"
         >
           <div className="flex items-center justify-between gap-2">
             <h4
-              className="truncate text-[13px] font-bold tracking-tight text-white"
+              className="truncate text-[13px] font-bold tracking-tight text-ink dark:text-white"
               title={makeModel}
             >
               {makeModel}
@@ -134,11 +232,11 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
                   to={inventoryHref}
                   onClick={() => markChatNavigating()}
                   aria-label={`View ${makeModel} in inventory`}
-                  className="flex h-6 w-6 items-center justify-center rounded-full bg-white/[0.08] hover:bg-white/[0.18] border border-white/20 hover:border-white/40 text-[#f7f6f2] hover:text-white transition-all shadow-xs cursor-pointer"
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.18] border border-black/10 dark:border-white/20 hover:border-black/20 dark:hover:border-white/40 text-ink dark:text-[#f7f6f2] hover:text-ink dark:hover:text-white transition-all shadow-xs cursor-pointer"
                   style={{
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
-                    boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.35)",
+                    boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.4)",
                   }}
                 >
                   <svg
@@ -160,10 +258,10 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
               {/* Expand / Collapse Chevron Indicator */}
               <button
                 type="button"
-                onClick={() => setIsExpanded((prev) => !prev)}
+                onClick={toggleExpand}
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? "Collapse vehicle specs" : "Expand vehicle specs"}
-                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.14] border border-white/15 text-[#9da3b4] hover:text-white transition-all cursor-pointer"
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] border border-black/10 dark:border-white/15 text-muted dark:text-[#9da3b4] hover:text-ink dark:hover:text-white transition-all cursor-pointer"
               >
                 <svg
                   width="12"
@@ -183,13 +281,13 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
           </div>
 
           {/* Subtitle: Same font, single row */}
-          <p className="truncate text-[11.5px] font-medium text-[#9da3b4] tracking-tight">
+          <p className="truncate text-[11.5px] font-medium text-muted dark:text-[#9da3b4] tracking-tight">
             {trimSubtitle}
           </p>
         </header>
 
         {/* ======================================================== */}
-        {/* 2. IMAGE SECTION: 145px (Always visible in both states)  */}
+        {/* 2. IMAGE SECTION: 142px (Always visible in both states)  */}
         {/* ======================================================== */}
         <div className="group/thumb relative h-[142px] w-full overflow-hidden bg-black/40">
           {heroImage ? (
@@ -201,7 +299,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
               onClick={handleOpenGallery}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs text-[#9da3b4]">
+            <div className="flex h-full w-full items-center justify-center text-xs text-muted dark:text-[#9da3b4]">
               🚗 No Auction Photos
             </div>
           )}
@@ -255,7 +353,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
             <button
               type="button"
               aria-label="All images"
-              className="absolute bottom-2 right-2 z-10 inline-flex max-w-[calc(100%-0.5rem)] items-center justify-center rounded-full border border-white/20 bg-[#141413] text-white shadow-[0_4px_12px_rgba(0,0,0,0.55)] transition-all duration-200 ease-out group-hover/thumb:w-auto group-hover/thumb:bg-accent h-7 w-7 group-hover/thumb:px-1.5 cursor-pointer"
+              className="absolute bottom-2 right-2 z-10 inline-flex max-w-[calc(100%-0.5rem)] items-center justify-center rounded-full border border-white/20 bg-[#141413]/85 backdrop-blur-md text-white shadow-[0_4px_12px_rgba(0,0,0,0.55)] transition-all duration-200 ease-out group-hover/thumb:w-auto group-hover/thumb:bg-accent h-7 w-7 group-hover/thumb:px-1.5 cursor-pointer"
               onClick={handleOpenGallery}
             >
               <span className="inline-flex shrink-0 items-center justify-center h-7 w-7">
@@ -273,73 +371,77 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
         </div>
 
         {/* ======================================================== */}
-        {/* 3. EXPANDED ACCORDION: 3 Tabs (12 Specs) + Action CTA    */}
+        {/* 3. EXPANDED ACCORDION: Circular Tabs + 12 Specs + CTA   */}
         {/* ======================================================== */}
         {isExpanded && (
-          <div className="flex flex-col border-t border-white/10 animate-in fade-in duration-200">
-            {/* 3 Single-Word Tab Switcher */}
-            <div className="flex items-center gap-1 p-2 bg-black/20 border-b border-white/8">
-              {(["overview", "salvage", "condition"] as const).map((tabKey) => {
-                const isActive = activeTab === tabKey;
-                return (
-                  <button
-                    key={tabKey}
-                    type="button"
-                    onClick={() => setActiveTab(tabKey)}
-                    className={`flex-1 py-1.5 px-2 rounded-md text-[11px] font-medium transition-all capitalize cursor-pointer ${
-                      isActive
-                        ? "bg-white/[0.12] border border-white/20 text-white font-semibold shadow-xs"
-                        : "text-[#8e94a5] hover:text-white hover:bg-white/[0.04]"
-                    }`}
-                    style={
-                      isActive
-                        ? {
-                            backdropFilter: "blur(12px)",
-                            WebkitBackdropFilter: "blur(12px)",
-                            boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.35)",
-                          }
-                        : {}
-                    }
-                  >
-                    {tabKey}
-                  </button>
-                );
-              })}
+          <div className="flex flex-col border-t border-black/[0.07] dark:border-white/10 animate-in fade-in duration-200">
+            {/* Circular Edge Glass Tabs Bar (Overview | Salvage | Condition) */}
+            <div className="px-3 pt-2.5 pb-1">
+              <div className="flex items-center gap-1 p-1 rounded-full border border-black/[0.07] dark:border-white/10 bg-black/[0.04] dark:bg-black/35 backdrop-blur-md shadow-inner">
+                {(["overview", "salvage", "condition"] as const).map((tabKey) => {
+                  const isActive = activeTab === tabKey;
+                  return (
+                    <button
+                      key={tabKey}
+                      type="button"
+                      onClick={() => setActiveTab(tabKey)}
+                      className={`flex-1 py-1.5 px-3 rounded-full text-[11px] font-medium transition-all capitalize cursor-pointer text-center ${
+                        isActive
+                          ? "bg-white/95 dark:bg-white/[0.18] text-ink dark:text-white font-semibold border border-black/10 dark:border-white/25 shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.45)]"
+                          : "text-muted dark:text-[#9ba1b2] hover:text-ink dark:hover:text-white hover:bg-black/[0.025] dark:hover:bg-white/[0.06]"
+                      }`}
+                      style={
+                        isActive
+                          ? {
+                              backdropFilter: "blur(14px)",
+                              WebkitBackdropFilter: "blur(14px)",
+                            }
+                          : {}
+                      }
+                    >
+                      {tabKey}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* 12 Spec Rows (4 per tab) - Uniform Calm Typography */}
             <div className="flex flex-col gap-1.5 p-3 min-h-[110px]">
               {activeTab === "overview" && (
                 <>
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">
                       {vehicle.hasActiveBids ? "Current Bid" : "Opening Bid"}
                     </span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       ${bid.toLocaleString()} {vehicle.hasActiveBids === false ? "(Pre-Bid)" : ""}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Est. ACV</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Est. ACV</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       ${acv.toLocaleString()}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Arbitrage Spread</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Arbitrage Spread</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {calculatedSpread > 0
                         ? `+$${calculatedSpread.toLocaleString()} (${spreadPct})`
                         : "N/A"}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px]">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Auction Date & Yard</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right truncate max-w-[170px]" title={`${vehicle.auctionDate || vehicle.auctionDateTime || "Upcoming"} • ${vehicle.branch || vehicle.location || "Online"}`}>
-                      {vehicle.auctionDate || vehicle.auctionDateTime || "Upcoming"} • {vehicle.branch || vehicle.location || "Online"}
+                  <div className="flex items-center justify-between gap-2 text-[11.5px]">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5] shrink-0">Date & Yard</span>
+                    <span
+                      className="font-semibold text-ink dark:text-[#f7f6f2] text-right truncate text-[11px]"
+                      title={`${vehicle.auctionDate || vehicle.auctionDateTime || "Upcoming"} • ${vehicle.branch || vehicle.location || "Online"}`}
+                    >
+                      {formatCrispAuctionDateTime(vehicle.auctionDate, vehicle.auctionTime, vehicle.auctionDateTime)} • {formatCrispYard(vehicle.branch || vehicle.location)}
                     </span>
                   </div>
                 </>
@@ -347,30 +449,30 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
 
               {activeTab === "salvage" && (
                 <>
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Primary Damage</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Primary Damage</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {vehicle.primaryDamage || "Normal Wear"}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Secondary Damage</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Secondary Damage</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {vehicle.secondaryDamage || "None"}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Title / Document</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right truncate max-w-[170px]" title={vehicle.titleDoc || vehicle.titleType || "Salvage Certificate"}>
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Title / Document</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right truncate max-w-[170px]" title={vehicle.titleDoc || vehicle.titleType || "Salvage Certificate"}>
                       {vehicle.titleDoc || vehicle.titleType || "Salvage Certificate"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px]">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Loss & Seller Type</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right truncate max-w-[170px]" title={`${vehicle.lossType || "Collision"} • ${vehicle.sellerType || "Insurance Co"}`}>
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Loss & Seller Type</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right truncate max-w-[170px]" title={`${vehicle.lossType || "Collision"} • ${vehicle.sellerType || "Insurance Co"}`}>
                       {vehicle.lossType || "Collision"} • {vehicle.sellerType || "Insurance Co"}
                     </span>
                   </div>
@@ -379,23 +481,23 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
 
               {activeTab === "condition" && (
                 <>
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Score</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Score</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {vehicle.vehicleScore || vehicle.score || 50} / 50
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Start Code & Key</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Start Code & Key</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {vehicle.startCode || vehicle.startStatus || "Run & Drive"} • {vehicle.keyStatus || "Key Present"}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-white/7">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Odometer</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                  <div className="flex items-center justify-between gap-3 text-[11.5px] pb-1 border-b border-dashed border-black/[0.07] dark:border-white/10">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Odometer</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {typeof vehicle.odometer === "number"
                         ? `${vehicle.odometer.toLocaleString()} mi`
                         : vehicle.odometer || "Verified Low"}
@@ -403,8 +505,8 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-[11.5px]">
-                    <span className="text-[11px] font-medium text-[#8e94a5]">Airbags</span>
-                    <span className="font-semibold text-[#f7f6f2] text-right">
+                    <span className="text-[11px] font-medium text-muted dark:text-[#8e94a5]">Airbags</span>
+                    <span className="font-semibold text-ink dark:text-[#f7f6f2] text-right">
                       {vehicle.airbags || "Intact (Not Deployed)"}
                     </span>
                   </div>
@@ -412,20 +514,15 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onViewGallery
               )}
             </div>
 
-            {/* Action CTA: Pure Smoked Frosted Glass Button (Zero Orange Infusion) */}
+            {/* Action CTA: Circular Edges & Enhanced Glassmorphism */}
             <div className="p-3 pt-0">
               <Link
                 to={inventoryHref}
                 onClick={() => markChatNavigating()}
-                className="group/btn relative flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg text-xs font-semibold text-[#f7f6f2] hover:text-white transition-all shadow-sm cursor-pointer whitespace-nowrap overflow-hidden"
+                className="group/btn relative flex items-center justify-center gap-2 w-full py-2.5 px-5 rounded-full text-xs font-semibold text-ink dark:text-[#f7f6f2] hover:text-ink dark:hover:text-white transition-all cursor-pointer whitespace-nowrap overflow-hidden border border-black/10 dark:border-white/16 border-t-white dark:border-t-white/35 bg-white/80 dark:bg-white/[0.06] hover:bg-white/95 dark:hover:bg-white/[0.12] shadow-[0_4px_14px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)] dark:shadow-[0_4px_14px_rgba(0,0,0,0.40),inset_0_1px_0_rgba(255,255,255,0.40)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,1)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.60)] active:scale-[0.99]"
                 style={{
-                  background: "rgba(255, 255, 255, 0.05)",
                   backdropFilter: "blur(28px) saturate(200%)",
                   WebkitBackdropFilter: "blur(28px) saturate(200%)",
-                  border: "1px solid rgba(255, 255, 255, 0.16)",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.32)",
-                  boxShadow:
-                    "inset 0 1px 0 0 rgba(255, 255, 255, 0.40), inset 0 0 16px rgba(255, 255, 255, 0.02), 0 4px 14px rgba(0, 0, 0, 0.40)",
                 }}
               >
                 <span className="relative z-10">View Details</span>

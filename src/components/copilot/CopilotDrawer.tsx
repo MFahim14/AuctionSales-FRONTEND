@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useLocation } from "@/compat/router";
 import { useCopilotChat } from "./useCopilotChat";
 import { VehicleCard } from "./VehicleCard";
+import type { MatchedVehicle } from "../../api/copilot";
 
 interface CopilotDrawerProps {
   isOpen?: boolean;
@@ -38,34 +39,35 @@ function formatRelativeTime(timestamp: number): string {
 }
 
 /**
- * ============================================================================
- * HIDEMARK: Copilot AI Chat Box Visibility Toggle
- * ============================================================================
- * Set HIDE_COPILOT to false to permanently unhide the AI chat drawer in the UI.
- *
- * Easy unhide options:
- *   1. Permanent: Change `HIDE_COPILOT = false` below.
- *   2. Instant Testing / Preview without code changes:
- *      - Add '?copilot=true' (or '?copilot=1') to your URL: /app/inventory?copilot=1
- *      - Or run in browser console: localStorage.setItem('enable_copilot', 'true')
- * ============================================================================
+ * UI TOGGLE: Set to true to show the thread history dropdown menu in the header.
+ * Set to false to show "FS FairScout.AI" as a simple, elegant brand label.
+ * To revert back, simply change SHOW_HEADER_DROPDOWN to true.
  */
-export const HIDE_COPILOT = false;
+export const SHOW_HEADER_DROPDOWN = false;
 
-export function isCopilotVisible(): boolean {
-  if (typeof window !== "undefined") {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("copilot") === "true" || params.get("copilot") === "1") {
-        return true;
-      }
-      if (localStorage.getItem("enable_copilot") === "true") {
-        return true;
-      }
-    } catch {}
-  }
-  return !HIDE_COPILOT;
+interface CopilotVehicleCarouselProps {
+  vehicles: MatchedVehicle[];
 }
+
+const CopilotVehicleCarousel: React.FC<CopilotVehicleCarouselProps> = ({ vehicles }) => {
+  const [allExpanded, setAllExpanded] = useState(false);
+
+  return (
+    <div
+      className="mt-2.5 -mx-1 flex w-[calc(100%+8px)] gap-3.5 overflow-x-auto pb-3 pt-1 px-1 scroll-smooth scrollbar-thin select-none"
+      style={{ scrollSnapType: "x mandatory" }}
+    >
+      {vehicles.map((v) => (
+        <VehicleCard
+          key={v.stockNumber}
+          vehicle={v}
+          isExpanded={allExpanded}
+          onToggleExpand={() => setAllExpanded((prev) => !prev)}
+        />
+      ))}
+    </div>
+  );
+};
 
 export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, onOpen }) => {
   const {
@@ -240,10 +242,6 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
     setIsExpanded(true);
   };
 
-  if (!isCopilotVisible()) {
-    return null;
-  }
-
   return (
     <aside
       aria-label="FairScout.AI"
@@ -256,14 +254,14 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
         <div
           role="region"
           aria-label="FairScout.AI Messenger"
-          className={`relative mb-3 flex ${currentWidthClass} h-[520px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-[24px] border animate-in fade-in slide-in-from-bottom-5 duration-300 transition-[width] ease-out select-text`}
+          className={`relative mb-3 flex ${currentWidthClass} h-[520px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-[24px] border border-black/[0.08] dark:border-white/20 border-t-white dark:border-t-white/40 animate-in fade-in slide-in-from-bottom-5 duration-300 transition-[width] ease-out select-text`}
           style={{
-            backgroundColor: "color-mix(in srgb, var(--surface) 68%, transparent)",
+            backgroundColor: "color-mix(in srgb, var(--surface) 72%, transparent)",
             borderColor: "color-mix(in srgb, var(--hairline) 60%, transparent)",
-            backdropFilter: "blur(32px) saturate(210%)",
-            WebkitBackdropFilter: "blur(32px) saturate(210%)",
+            backdropFilter: "blur(36px) saturate(210%)",
+            WebkitBackdropFilter: "blur(36px) saturate(210%)",
             boxShadow:
-              "inset 0 1.5px 0 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 -1px 0 0 rgba(0, 0, 0, 0.1), 0 32px 64px -16px rgba(0, 0, 0, 0.35), 0 16px 32px -8px rgba(0, 0, 0, 0.22)",
+              "inset 0 1.5px 0 0 rgba(255, 255, 255, 0.85), inset 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 -1px 0 0 rgba(0, 0, 0, 0.08), 0 32px 64px -16px rgba(0, 0, 0, 0.28), 0 16px 32px -8px rgba(0, 0, 0, 0.16)",
             color: "var(--ink)",
           }}
         >
@@ -275,146 +273,156 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
 
           {/* Header Bar */}
           <div
-            className="relative z-20 flex shrink-0 items-center justify-between border-b px-3.5 py-2.5 backdrop-blur-md"
+            className="relative z-20 flex shrink-0 items-center justify-between border-b border-black/[0.06] dark:border-white/10 px-3.5 py-2.5 backdrop-blur-md"
             style={{
-              borderColor: "color-mix(in srgb, var(--hairline) 50%, transparent)",
-              backgroundColor: "color-mix(in srgb, var(--surface) 45%, transparent)",
+              backgroundColor: "color-mix(in srgb, var(--surface) 50%, transparent)",
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
-              boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.3)",
+              boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.6)",
               color: "var(--ink)",
             }}
           >
-            {/* Conversation Switcher Dropdown Trigger */}
-            <div className="relative" ref={menuRef}>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen((prev) => !prev);
-                }}
-                className="flex items-center gap-2 rounded-xl px-2 py-1 -ml-1 hover:bg-white/15 dark:hover:bg-white/10 transition cursor-pointer"
-                style={{ color: "var(--ink)" }}
-                title="FairScout.AI options"
-              >
-                {/* FS Avatar Badge */}
+            {/* Header Brand: Dropdown vs Simple Clean Label */}
+            {SHOW_HEADER_DROPDOWN ? (
+              <div className="relative" ref={menuRef}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen((prev) => !prev);
+                  }}
+                  className="flex items-center gap-2 rounded-xl px-2 py-1 -ml-1 hover:bg-white/15 dark:hover:bg-white/10 transition cursor-pointer"
+                  style={{ color: "var(--ink)" }}
+                  title="FairScout.AI options"
+                >
+                  {/* FS Avatar Badge */}
+                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-tr from-accent via-[#ce6e42] to-[#e88a59] text-white font-bold text-[11px] shadow-sm border border-white/20">
+                    FS
+                  </span>
+                  <span className="text-xs font-semibold tracking-tight">FairScout.AI</span>
+                  {/* Downward Chevron */}
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    style={{ color: "var(--muted)" }}
+                    className={`transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
+                  >
+                    <path
+                      d="M4.00009 5.1499C4.22009 5.1499 4.44009 5.2299 4.60009 5.3999L8.00009 8.7999L11.4001 5.3999C11.7301 5.0699 12.2701 5.0699 12.6001 5.3999C12.9301 5.7299 12.9301 6.2699 12.6001 6.5999L8.00009 11.1999L3.40009 6.5999C3.07009 6.2699 3.07009 5.7299 3.40009 5.3999C3.57009 5.2299 3.78009 5.1499 4.00009 5.1499Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+
+                {/* Fin AI Style Dropdown Menu (Glassmorphism card) */}
+                {isMenuOpen && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute left-0 top-full mt-1.5 w-64 max-h-72 overflow-y-auto rounded-2xl border p-1.5 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150 scrollbar-thin"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--surface) 80%, transparent)",
+                      borderColor: "color-mix(in srgb, var(--hairline) 70%, transparent)",
+                      backdropFilter: "blur(36px) saturate(210%)",
+                      WebkitBackdropFilter: "blur(36px) saturate(210%)",
+                      boxShadow:
+                        "inset 0 1px 0 0 rgba(255, 255, 255, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 24px 60px -12px rgba(0, 0, 0, 0.4)",
+                      color: "var(--ink)",
+                    }}
+                  >
+                    {/* + New conversation action */}
+                    <button
+                      type="button"
+                      onClick={handleNewConversationClick}
+                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium hover:bg-accent hover:text-white transition cursor-pointer"
+                      style={{ color: "var(--ink)" }}
+                    >
+                      <span className="flex h-5 w-5 items-center justify-center rounded-md bg-black/5 dark:bg-white/10 text-current text-xs font-bold">
+                        +
+                      </span>
+                      <span>New conversation</span>
+                    </button>
+
+                    <div
+                      className="my-1 border-t"
+                      style={{ borderColor: "color-mix(in srgb, var(--hairline) 50%, transparent)" }}
+                    />
+
+                    {/* Convo History Section */}
+                    <div
+                      className="px-2.5 py-1 text-[9.5px] font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      Recent Conversations
+                    </div>
+
+                    {threads.length === 0 ? (
+                      <div
+                        className="px-2.5 py-2 text-[10.5px] italic"
+                        style={{ color: "var(--muted)" }}
+                      >
+                        No past conversations yet
+                      </div>
+                    ) : (
+                      <div className="space-y-0.5">
+                        {threads.map((t) => {
+                          const isActive = t.id === activeThreadId;
+                          return (
+                            <div
+                              key={t.id}
+                              className={`group flex items-center justify-between rounded-xl px-2 py-1.5 text-xs transition cursor-pointer ${
+                                isActive
+                                  ? "bg-accent/15 text-accent font-medium"
+                                  : "hover:bg-black/5 dark:hover:bg-white/10"
+                              }`}
+                              style={{ color: isActive ? "var(--accent)" : "var(--ink)" }}
+                              onClick={() => handleSelectThread(t.id)}
+                            >
+                              <div className="min-w-0 flex-1 pr-1.5">
+                                <p className="truncate text-xs">{t.title}</p>
+                                <span
+                                  className="text-[9px] tabular-nums"
+                                  style={{ color: "var(--muted)" }}
+                                >
+                                  {formatRelativeTime(t.createdAt)}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-1">
+                                {isActive && (
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-xs" />
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={(e) => deleteThread(t.id, e)}
+                                  title="Delete conversation"
+                                  className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-muted hover:text-danger transition cursor-pointer"
+                                >
+                                  <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Simple Non-interactive Brand Label */
+              <div className="flex items-center gap-2 px-1 select-none">
                 <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-tr from-accent via-[#ce6e42] to-[#e88a59] text-white font-bold text-[11px] shadow-sm border border-white/20">
                   FS
                 </span>
-                <span className="text-xs font-semibold tracking-tight">FairScout.AI</span>
-                {/* Downward Chevron */}
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  style={{ color: "var(--muted)" }}
-                  className={`transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
-                >
-                  <path
-                    d="M4.00009 5.1499C4.22009 5.1499 4.44009 5.2299 4.60009 5.3999L8.00009 8.7999L11.4001 5.3999C11.7301 5.0699 12.2701 5.0699 12.6001 5.3999C12.9301 5.7299 12.9301 6.2699 12.6001 6.5999L8.00009 11.1999L3.40009 6.5999C3.07009 6.2699 3.07009 5.7299 3.40009 5.3999C3.57009 5.2299 3.78009 5.1499 4.00009 5.1499Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </button>
-
-              {/* Fin AI Style Dropdown Menu (Glassmorphism card) */}
-              {isMenuOpen && (
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="absolute left-0 top-full mt-1.5 w-64 max-h-72 overflow-y-auto rounded-2xl border p-1.5 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150 scrollbar-thin"
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--surface) 80%, transparent)",
-                    borderColor: "color-mix(in srgb, var(--hairline) 70%, transparent)",
-                    backdropFilter: "blur(36px) saturate(210%)",
-                    WebkitBackdropFilter: "blur(36px) saturate(210%)",
-                    boxShadow:
-                      "inset 0 1px 0 0 rgba(255, 255, 255, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 24px 60px -12px rgba(0, 0, 0, 0.4)",
-                    color: "var(--ink)",
-                  }}
-                >
-                  {/* + New conversation action */}
-                  <button
-                    type="button"
-                    onClick={handleNewConversationClick}
-                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium hover:bg-accent hover:text-white transition cursor-pointer"
-                    style={{ color: "var(--ink)" }}
-                  >
-                    <span className="flex h-5 w-5 items-center justify-center rounded-md bg-black/5 dark:bg-white/10 text-current text-xs font-bold">
-                      +
-                    </span>
-                    <span>New conversation</span>
-                  </button>
-
-                  <div
-                    className="my-1 border-t"
-                    style={{ borderColor: "color-mix(in srgb, var(--hairline) 50%, transparent)" }}
-                  />
-
-                  {/* Convo History Section */}
-                  <div
-                    className="px-2.5 py-1 text-[9.5px] font-semibold uppercase tracking-wider"
-                    style={{ color: "var(--muted)" }}
-                  >
-                    Recent Conversations
-                  </div>
-
-                  {threads.length === 0 ? (
-                    <div
-                      className="px-2.5 py-2 text-[10.5px] italic"
-                      style={{ color: "var(--muted)" }}
-                    >
-                      No past conversations yet
-                    </div>
-                  ) : (
-                    <div className="space-y-0.5">
-                      {threads.map((t) => {
-                        const isActive = t.id === activeThreadId;
-                        return (
-                          <div
-                            key={t.id}
-                            className={`group flex items-center justify-between rounded-xl px-2 py-1.5 text-xs transition cursor-pointer ${
-                              isActive
-                                ? "bg-accent/15 text-accent font-medium"
-                                : "hover:bg-black/5 dark:hover:bg-white/10"
-                            }`}
-                            style={{ color: isActive ? "var(--accent)" : "var(--ink)" }}
-                            onClick={() => handleSelectThread(t.id)}
-                          >
-                            <div className="min-w-0 flex-1 pr-1.5">
-                              <p className="truncate text-xs">{t.title}</p>
-                              {/* Relative time format: min ago, hours ago, or date if older */}
-                              <span
-                                className="text-[9px] tabular-nums"
-                                style={{ color: "var(--muted)" }}
-                              >
-                                {formatRelativeTime(t.createdAt)}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-1">
-                              {isActive && (
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-xs" />
-                              )}
-                              <button
-                                type="button"
-                                onClick={(e) => deleteThread(t.id, e)}
-                                title="Delete conversation"
-                                className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-muted hover:text-danger transition cursor-pointer"
-                              >
-                                <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-                                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+                <span className="text-xs font-semibold tracking-tight" style={{ color: "var(--ink)" }}>
+                  FairScout.AI
+                </span>
+              </div>
+            )}
 
             {/* Right: Close Down-Chevron Button */}
             <button
@@ -453,63 +461,57 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, o
                 </p>
               </div>
             ) : (
-              messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                >
-                  {/* Message Bubble: Pure Glassmorphism with Refraction & Blur */}
-                  <div
-                    className={`max-w-[90%] px-3.5 py-2 text-xs leading-relaxed shadow-xs ${
-                      msg.role === "user"
-                        ? "text-white rounded-2xl rounded-br-xs font-normal"
-                        : "rounded-2xl rounded-tl-xs"
-                    }`}
-                    style={
-                      msg.role === "user"
-                        ? {
-                            backgroundColor: "color-mix(in srgb, var(--accent) 76%, transparent)",
-                            backdropFilter: "blur(20px) saturate(180%)",
-                            WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                            border: "1px solid rgba(255, 255, 255, 0.32)",
-                            boxShadow:
-                              "inset 0 1px 0 0 rgba(255, 255, 255, 0.48), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 24px -4px rgba(196, 103, 58, 0.38)",
-                          }
-                        : {
-                            backgroundColor: "color-mix(in srgb, var(--surface-muted) 54%, transparent)",
-                            backdropFilter: "blur(26px) saturate(190%)",
-                            WebkitBackdropFilter: "blur(26px) saturate(190%)",
-                            border: "1px solid color-mix(in srgb, var(--hairline) 70%, transparent)",
-                            boxShadow:
-                              "inset 0 1px 0 0 rgba(255, 255, 255, 0.32), inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px -4px rgba(0, 0, 0, 0.12)",
-                            color: "var(--ink)",
-                          }
-                    }
-                  >
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
-                  </div>
-
-                  {/* Delivery Receipt */}
-                  <span
-                    className="mt-1 px-1 text-[9.5px] tabular-nums"
-                    style={{ color: "var(--muted)" }}
-                  >
-                    {msg.role === "user" ? "You" : "FairScout.AI"} • {formatRelativeTime(msg.timestamp)}
-                  </span>
-
-                  {/* Curated Horizontal Snap Carousel */}
-                  {msg.vehicles && msg.vehicles.length > 0 && (
+              messages.map((msg) =>
+                msg.role === "user" ? (
+                  <div key={msg.id} className="flex flex-col items-end gap-1">
+                    {/* User Message Bubble: Pure Ultra Glassmorphism */}
                     <div
-                      className="mt-2.5 -mx-1 flex w-[calc(100%+8px)] gap-3.5 overflow-x-auto pb-3 pt-1 px-1 scroll-smooth scrollbar-thin select-none"
-                      style={{ scrollSnapType: "x mandatory" }}
+                      className="max-w-[86%] px-4 py-2.5 text-xs leading-relaxed rounded-[20px] rounded-br-[4px] border border-black/[0.09] dark:border-white/25 border-t-white dark:border-t-white/40 text-ink dark:text-[#f7f6f2] bg-white/80 dark:bg-white/[0.065] shadow-[0_4px_16px_-2px_rgba(0,0,0,0.06),inset_0_1px_0_0_rgba(255,255,255,0.95)] dark:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.35)]"
+                      style={{
+                        backdropFilter: "blur(36px) saturate(200%)",
+                        WebkitBackdropFilter: "blur(36px) saturate(200%)",
+                      }}
                     >
-                      {msg.vehicles.map((v) => (
-                        <VehicleCard key={v.stockNumber} vehicle={v} />
-                      ))}
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
                     </div>
-                  )}
-                </div>
-              ))
+
+                    {/* User Receipt */}
+                    <span
+                      className="mr-1 text-[10px] tabular-nums"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      You • {formatRelativeTime(msg.timestamp)}
+                    </span>
+                  </div>
+                ) : (
+                  <div key={msg.id} className="flex flex-col items-start gap-1.5 w-full">
+                    {/* Agent Header Row matching POC */}
+                    <div
+                      className="flex items-center gap-1.5 px-0.5 text-[11px] font-medium"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] shrink-0" />
+                      <span>FairScout.AI • {formatRelativeTime(msg.timestamp)}</span>
+                    </div>
+
+                    {/* Agent Message Prose Bubble: Pure Frosted Glassmorphism */}
+                    <div
+                      className="max-w-[92%] px-4 py-3 text-xs leading-relaxed rounded-[20px] rounded-tl-[4px] border border-black/[0.08] dark:border-white/20 border-t-white dark:border-t-white/35 text-ink dark:text-[#f7f6f2] bg-white/75 dark:bg-white/[0.045] shadow-[0_6px_20px_-3px_rgba(0,0,0,0.05),inset_0_1px_0_0_rgba(255,255,255,0.95)] dark:shadow-[0_12px_30px_-6px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.32)]"
+                      style={{
+                        backdropFilter: "blur(36px) saturate(200%)",
+                        WebkitBackdropFilter: "blur(36px) saturate(200%)",
+                      }}
+                    >
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                    </div>
+
+                    {/* Curated Horizontal Snap Carousel: Clicking any title expands/collapses all cards in sync */}
+                    {msg.vehicles && msg.vehicles.length > 0 && (
+                      <CopilotVehicleCarousel vehicles={msg.vehicles} />
+                    )}
+                  </div>
+                )
+              )
             )}
 
             {loading && (

@@ -13,36 +13,6 @@ import { CopilotDrawer } from "../components/copilot/CopilotDrawer";
 
 const NAV_KEY = "fps-nav-collapsed";
 
-/**
- * ============================================================================
- * HIDEMARK: Copilot AI Chat Box Visibility Toggle
- * ============================================================================
- * Set HIDE_COPILOT to false to permanently unhide the AI chat drawer in the UI.
- *
- * Easy unhide options:
- *   1. Permanent: Change `HIDE_COPILOT = false` below.
- *   2. Instant Testing / Preview without code changes:
- *      - Add '?copilot=true' (or '?copilot=1') to your URL: /app/inventory?copilot=1
- *      - Or run in browser console: localStorage.setItem('enable_copilot', 'true')
- * ============================================================================
- */
-export const HIDE_COPILOT = false;
-
-export function isCopilotVisible(): boolean {
-  if (typeof window !== "undefined") {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("copilot") === "true" || params.get("copilot") === "1") {
-        return true;
-      }
-      if (localStorage.getItem("enable_copilot") === "true") {
-        return true;
-      }
-    } catch {}
-  }
-  return !HIDE_COPILOT;
-}
-
 const appNav = [
   { to: paths.home, label: "Home", icon: "home", end: true },
   { to: paths.inventory, label: "Inventory", icon: "inventory" },
@@ -242,11 +212,7 @@ export function AppShell({ children }: { children?: ReactNode } = {}) {
           {children ?? <Outlet />}
         </div>
 
-        {/* =========================================================================
-            FEATURE HIDEMARK: FairScout AI Copilot Chat Drawer
-            To unhide: Change HIDE_COPILOT to false or pass ?copilot=1 in URL
-            ========================================================================= */}
-        {isCopilotVisible() && location.pathname.startsWith("/app/inventory") && (
+        {location.pathname.startsWith("/app/inventory") && (
           <CopilotDrawer />
         )}
       </main>
