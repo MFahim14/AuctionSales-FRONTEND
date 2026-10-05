@@ -24,9 +24,9 @@ cp .env.example .env.local
 Ensure the following variables are configured:
 ```env
 NEXT_PUBLIC_AWS_REGION=us-east-1
-NEXT_PUBLIC_USER_POOL_ID=us-east-1_exampleId
-NEXT_PUBLIC_USER_POOL_CLIENT_ID=exampleclientid1234567890
-NEXT_PUBLIC_API_BASE=https://example-api.execute-api.us-east-1.amazonaws.com/v1
+NEXT_PUBLIC_USER_POOL_ID=us-east-1_ExamplePool
+NEXT_PUBLIC_USER_POOL_CLIENT_ID=exampleclientid1234567890ab
+NEXT_PUBLIC_API_BASE=https://exampleapi.execute-api.us-east-1.amazonaws.com/v1
 ```
 
 ### 2. Install Dependencies
