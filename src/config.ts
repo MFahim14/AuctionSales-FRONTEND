@@ -52,7 +52,11 @@ if (typeof window !== "undefined") {
   requireConfig();
 }
 
-export const apiBaseUrl = readEnv("API_BASE").replace(/\/+$/, "");
+// In the browser, always route through the Next.js /api proxy to prevent direct AWS API Gateway exposure
+export const apiBaseUrl =
+  typeof window !== "undefined"
+    ? "/api"
+    : readEnv("API_BASE").replace(/\/+$/, "") || "/api";
 export const awsRegion = readEnv("AWS_REGION");
 export const userPoolId = readEnv("USER_POOL_ID");
 export const userPoolClientId = readEnv("USER_POOL_CLIENT_ID");

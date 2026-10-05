@@ -13,36 +13,6 @@ import { CopilotDrawer } from "../components/copilot/CopilotDrawer";
 
 const NAV_KEY = "fps-nav-collapsed";
 
-/**
- * ============================================================================
- * HIDEMARK: Copilot AI Chat Box Visibility Toggle
- * ============================================================================
- * Set HIDE_COPILOT to false to permanently unhide the AI chat drawer in the UI.
- *
- * Easy unhide options:
- *   1. Permanent: Change `HIDE_COPILOT = false` below.
- *   2. Instant Testing / Preview without code changes:
- *      - Add '?copilot=true' (or '?copilot=1') to your URL: /app/inventory?copilot=1
- *      - Or run in browser console: localStorage.setItem('enable_copilot', 'true')
- * ============================================================================
- */
-export const HIDE_COPILOT = true;
-
-export function isCopilotVisible(): boolean {
-  if (typeof window !== "undefined") {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("copilot") === "true" || params.get("copilot") === "1") {
-        return true;
-      }
-      if (localStorage.getItem("enable_copilot") === "true") {
-        return true;
-      }
-    } catch {}
-  }
-  return !HIDE_COPILOT;
-}
-
 const appNav = [
   { to: paths.home, label: "Home", icon: "home", end: true },
   { to: paths.inventory, label: "Inventory", icon: "inventory" },
@@ -216,6 +186,9 @@ export function AppShell({ children }: { children?: ReactNode } = {}) {
         />
       ) : null}
       <main className="relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
+        {/* Subtle Ambient Spherical Glows for Authentic Glass Refraction (Matches Reference Image) */}
+        <div className="pointer-events-none fixed bottom-0 right-0 z-0 h-[480px] w-[480px] rounded-full bg-gradient-to-tr from-accent/15 via-orange-400/10 to-pink-400/10 blur-[100px] dark:from-accent/8 dark:via-purple-500/5 dark:to-transparent dark:blur-[130px]" aria-hidden="true" />
+
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-hairline bg-canvas/95 px-3 backdrop-blur-md lg:hidden">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -242,11 +215,7 @@ export function AppShell({ children }: { children?: ReactNode } = {}) {
           {children ?? <Outlet />}
         </div>
 
-        {/* =========================================================================
-            FEATURE HIDEMARK: FairScout AI Copilot Chat Drawer
-            To unhide: Change HIDE_COPILOT to false or pass ?copilot=1 in URL
-            ========================================================================= */}
-        {isCopilotVisible() && location.pathname.startsWith("/app/inventory") && (
+        {location.pathname.startsWith("/app/inventory") && (
           <CopilotDrawer />
         )}
       </main>
