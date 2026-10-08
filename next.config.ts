@@ -30,7 +30,8 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
   },
   async redirects() {
     return [
-      { source: "/", destination: "/app", permanent: false },
+      { source: "/app/inventory", destination: "/inventory", permanent: false },
+      { source: "/app/inventory/:stockNumber", destination: "/inventory/:stockNumber", permanent: false },
       { source: "/app/watchlists", destination: "/app/presets", permanent: true },
       { source: "/app/watchlists/new", destination: "/app/presets/new", permanent: true },
       { source: "/app/watchlists/:watchlistId", destination: "/app/presets/:watchlistId", permanent: true },

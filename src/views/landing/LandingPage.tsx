@@ -1,0 +1,750 @@
+"use client";
+
+import { useState, useRef } from "react";
+import Link from "next/link";
+import { paths } from "@/routes/paths";
+import { CopilotDrawer, type CopilotDrawerHandle } from "@/components/copilot/CopilotDrawer";
+import { PublicHeader } from "@/components/layout/PublicHeader";
+import { BrandWordmark } from "@/components/layout/BrandWordmark";
+
+interface CarCardItem {
+  id: string;
+  name: string;
+  spec: string;
+  price: string;
+  image: string;
+  titleTag: string;
+  damageTag: string;
+  availability: string;
+  damageType: string;
+}
+
+const FEATURED_CARS: CarCardItem[] = [
+  {
+    id: "porsche-macan-2022",
+    name: "2022 Porsche Macan",
+    spec: "Base AWD · 38,400 mi · Dallas, TX",
+    price: "$24,500",
+    image: "/assets/secondlook_hero.jpg",
+    titleTag: "Clean title example",
+    damageTag: "Accident damage",
+    damageType: "accident",
+    availability: "Sample listing",
+  },
+  {
+    id: "bmw-330i-2023",
+    name: "2023 BMW 330i",
+    spec: "Sport Line · 24,800 mi · Denver, CO",
+    price: "$19,000",
+    image: "/assets/prefooter_bmw.jpg",
+    titleTag: "Clean title example",
+    damageTag: "Hail damage",
+    damageType: "hail",
+    availability: "Auction deadline not supplied",
+  },
+  {
+    id: "mercedes-c300-2022",
+    name: "2022 Mercedes-Benz C 300",
+    spec: "Premium · 31,200 mi · Houston, TX",
+    price: "$20,000",
+    image: "/assets/cat_luxury.jpg",
+    titleTag: "Clean title example",
+    damageTag: "Accident damage",
+    damageType: "accident",
+    availability: "Sample listing",
+  },
+  {
+    id: "bmw-330i-2021",
+    name: "2021 BMW 330i",
+    spec: "Base RWD · 46,500 mi · Dallas, TX",
+    price: "$15,500",
+    image: "/assets/featured_camry.jpg",
+    titleTag: "Clean title example",
+    damageTag: "Hail damage",
+    damageType: "hail",
+    availability: "Sample listing",
+  },
+];
+
+const FAQ_ITEMS = [
+  {
+    q: "Does clean title mean accident-free?",
+    a: "No. Clean title refers to title status, not accident history or safety. Verify the title and VIN history and get an independent inspection before buying.",
+  },
+  {
+    q: "What are your fees?",
+    a: "Our service fee and applicable auction, transport, tax and registration costs will be itemized in your written quote. Fees have not yet been published on this site.",
+  },
+  {
+    q: "Can the car be inspected before I buy?",
+    a: "Ask for the inspection options available for your selected vehicle before committing. Access and inspection scope depend on the seller or auction.",
+  },
+  {
+    q: "How do I get a repair estimate?",
+    a: "Sign in and request a road-ready quote with your ZIP code, budget and buying timeline. Our team manually evaluates the request. Repair estimates depend on the available evidence and inspection.",
+  },
+  {
+    q: "Can you help with shipping?",
+    a: "Yes, shipping guidance is part of the planned buying service. Availability, transport timing and cost are confirmed for the selected vehicle and delivery address.",
+  },
+  {
+    q: "How long does purchase through registration take?",
+    a: "Timing varies with the seller, transport, parts, repair scope and registration requirements. The team can outline a vehicle-specific timeline during quote review.",
+  },
+  {
+    q: "Is the 25% saving guaranteed?",
+    a: "No. It is a target. Actual savings depend on purchase price, repairs, fees and comparable market value. No road-ready price is published before manual review.",
+  },
+];
+
+export function LandingPage() {
+  const [savedVehicles, setSavedVehicles] = useState<Record<string, boolean>>({});
+  const [openFaqs, setOpenFaqs] = useState<Record<number, boolean>>({});
+  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
+  const copilotRef = useRef<CopilotDrawerHandle>(null);
+
+  const handleHeroAskAiClick = () => {
+    copilotRef.current?.focusAndShow();
+  };
+
+  const toggleSaveHeart = (id: string) => {
+    setSavedVehicles((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqs((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
+  return (
+    <div className="fairsales-landing">
+      {/* Morphing Adaptive Header: Zero size shift, early scroll trigger */}
+      <PublicHeader mode="landing" />
+
+      {/* ====================================================================
+           HERO SECTION: FULL-PAGE VIEWPORT FILL + DITTO "POTENTIAL, WITH A PLAN"
+           ==================================================================== */}
+      <section className="hero-section" id="hero">
+        {/* Full-bleed Luxury Sports Car Background */}
+        <div className="hero-bg-container">
+          <img
+            src="/assets/secondlook_hero.jpg"
+            alt="Illustrative sports car on an open road"
+            className="hero-bg-car"
+          />
+          <div className="hero-bg-scrim" />
+        </div>
+
+        {/* Main Hero Center Content Grid */}
+        <div className="hero-layout-grid">
+          <div className="hero-left-content">
+            <div className="hero-eyebrow">
+              <span className="eyebrow-dot" />
+              <span>A DIFFERENT ROAD TO OWNERSHIP</span>
+            </div>
+
+            <h1 className="hero-headline">
+              Your next car.
+              <br />
+              <em>A smarter price.</em>
+            </h1>
+
+            <p className="hero-subtext">
+              A curated list of wholesale cars with minor damage. <br />
+              Expert guidance from purchase through registration. <br />
+              A smarter path to savings of around 25%.
+            </p>
+
+            <div className="hero-buttons-row">
+              <Link href={paths.inventory} className="btn-claude-primary">
+                <span>Browse Cars</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M7 7h10v10" />
+                  <path d="M7 17 17 7" />
+                </svg>
+              </Link>
+
+              {/* Ask AI Button: Custom Claude 4-point Diamond Star + FS Badge */}
+              <button
+                type="button"
+                className="btn-hero-ai"
+                onClick={handleHeroAskAiClick}
+                aria-label="Ask FairScout AI"
+              >
+                <span>Ask AI</span>
+                <div className="ai-brand-glyph">
+                  {/* Claude signature 4-point Diamond Star */}
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+
+            <div className="hero-assurance">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              <span>Clean-title focus</span>
+              <span className="dot-sep">·</span>
+              <span>Wholesale access</span>
+              <span className="dot-sep">·</span>
+              <span>Guided all the way</span>
+            </div>
+          </div>
+
+          {/* EXACT DITTO REPLICA: POTENTIAL, WITH A PLAN (Claude Liquid Glass) */}
+          <div className="hero-float">
+            <span className="tiny">POTENTIAL, WITH A PLAN</span>
+            <strong>
+              Your car.
+              <br />
+              Your smart move.
+            </strong>
+            <div>
+              <span>Target savings after repairs</span>
+              <b>25%↘︎</b>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Bottom Bar Pinned Elegantly at Viewport Base */}
+        <div className="hero-bottom">
+          <span>SEE THE POTENTIAL. KNOW THE PROCESS.</span>
+          <span>SCROLL TO EXPLORE ↓</span>
+        </div>
+      </section>
+
+
+
+      {/* ====================================================================
+           SECTION 1: INTRO STRIP (BELOW HERO)
+           ==================================================================== */}
+      <section className="intro-strip">
+        <span>
+          Find the potential.
+          <br />
+          <b>We’ll help with the plan.</b>
+        </span>
+        <p>
+          Start with a curated wholesale car. Get an expert opinion and a personalized
+          road-ready quote before you make a decision.
+        </p>
+        <Link href={paths.inventory} className="intro-link">
+          <span>Explore inventory</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M7 7h10v10" />
+            <path d="M7 17 17 7" />
+          </svg>
+        </Link>
+      </section>
+
+      {/* ====================================================================
+           SECTION 2: 01 / FIND YOUR POTENTIAL (FEATURED CARS)
+           ==================================================================== */}
+      <section className="inventory-section section">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow dark">01 / FIND YOUR POTENTIAL</div>
+            <h2>
+              A second look.
+              <br />
+              <em>A better opportunity.</em>
+            </h2>
+          </div>
+          <p>
+            Browse wholesale prices freely. For total repair and road-ready costs, request a
+            personalized quote.
+          </p>
+        </div>
+
+        <div className="featured-label">
+          <span>FEATURED CARS · ILLUSTRATIVE LISTINGS</span>
+          <Link href={paths.inventory}>
+            <span>Browse all cars</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+
+        <div className="car-grid featured-grid">
+          {FEATURED_CARS.map((car) => {
+            const isSaved = !!savedVehicles[car.id];
+            return (
+              <article key={car.id} className="car-card">
+                <div className="car-photo">
+                  <img
+                    src={car.image}
+                    alt={`${car.name} illustrative photo`}
+                    loading="lazy"
+                  />
+                  <span className="title-tag">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    {car.titleTag}
+                  </span>
+
+                  <button
+                    type="button"
+                    className={`save-btn ${isSaved ? "is-saved" : ""}`}
+                    aria-label={`Save ${car.name}`}
+                    onClick={() => toggleSaveHeart(car.id)}
+                  >
+                    <svg viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor">
+                      <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+                    </svg>
+                  </button>
+
+                  <span className="damage-tag">{car.damageTag}</span>
+                </div>
+
+                <div className="car-info">
+                  <div className="car-name">
+                    <h3>{car.name}</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M7 7h10v10" />
+                      <path d="M7 17 17 7" />
+                    </svg>
+                  </div>
+                  <p className="car-meta">{car.spec}</p>
+
+                  <div className="car-price">
+                    <div>
+                      <span>Wholesale · Asking price</span>
+                      <strong>{car.price}</strong>
+                    </div>
+                    <span className="price-disclaimer">
+                      Before fees
+                      <br />
+                      &amp; repairs
+                    </span>
+                  </div>
+
+                  <p className="availability">{car.availability}</p>
+
+                  <div className="card-actions">
+                    <Link href={paths.inventory} className="card-action-view">
+                      <span>View Details</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </Link>
+                    <button
+                      type="button"
+                      className="card-action-save"
+                      onClick={() => toggleSaveHeart(car.id)}
+                    >
+                      <svg viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor">
+                        <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+                      </svg>
+                      <span>{isSaved ? "Saved" : "Save Car"}</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <p className="fine-print">
+          Sample vehicles and illustrative photos. Wholesale figures are example asking
+          prices or bids, before repairs, fees, taxes and shipping. Live inventory and actual
+          vehicle photos are pending.
+        </p>
+      </section>
+
+      {/* ====================================================================
+           SECTION 3: 02 / YOUR FIVE STEPS (THE JOURNEY)
+           ==================================================================== */}
+      <section className="journey-section section" id="journey">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow dark">02 / YOUR FIVE STEPS</div>
+            <h2>
+              From a good find
+              <br />
+              <em>to a great drive.</em>
+            </h2>
+          </div>
+          <p>One clear path. Expert support. You stay in control of the purchase.</p>
+        </div>
+
+        <div className="journey-grid five-steps">
+          <div className="step-card">
+            <span>01</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8L22 12L18 16" />
+              <path d="M2 12H22" />
+            </svg>
+            <h3>Find your car</h3>
+            <p>Choose from our curated wholesale cars.</p>
+          </div>
+
+          <div className="step-card">
+            <span>02</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8L22 12L18 16" />
+              <path d="M2 12H22" />
+            </svg>
+            <h3>Get expert advice</h3>
+            <p>Understand the damage, potential and estimated costs.</p>
+          </div>
+
+          <div className="step-card">
+            <span>03</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8L22 12L18 16" />
+              <path d="M2 12H22" />
+            </svg>
+            <h3>Buy through us</h3>
+            <p>Get help purchasing your chosen wholesale car.</p>
+          </div>
+
+          <div className="step-card">
+            <span>04</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8L22 12L18 16" />
+              <path d="M2 12H22" />
+            </svg>
+            <h3>Get road-ready</h3>
+            <p>We guide shipping, repairs and registration.</p>
+          </div>
+
+          <div className="step-card">
+            <span>05</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8L22 12L18 16" />
+              <path d="M2 12H22" />
+            </svg>
+            <h3>Enjoy the ride</h3>
+            <p>Drive the car you wanted at the right price.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+           SECTION 4: 03 / THE VALUE OF A GUIDE (WHY US)
+           ==================================================================== */}
+      <section className="why-section section">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow dark">03 / THE VALUE OF A GUIDE</div>
+            <h2>
+              More than access.
+              <br />
+              <em>A plan you understand.</em>
+            </h2>
+          </div>
+          <p>
+            Wholesale buying has moving parts. We help you make informed choices at each
+            step.
+          </p>
+        </div>
+
+        <div className="benefit-grid">
+          <div>
+            <span>01</span>
+            <h3>Expert evaluation</h3>
+            <p>A practical opinion on condition, repair scope and purchase potential.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <h3>Wholesale access</h3>
+            <p>Help navigating wholesale opportunities and buying through us.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <h3>Shipping help</h3>
+            <p>Guidance arranging transport to the right destination.</p>
+          </div>
+          <div>
+            <span>04</span>
+            <h3>Repair guidance</h3>
+            <p>Support understanding estimates, repair options and next steps.</p>
+          </div>
+          <div>
+            <span>05</span>
+            <h3>Registration support</h3>
+            <p>Help navigating the documents and local registration process.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+           SECTION 5: 04 / PROOF, IN THE DETAILS (SAVINGS & EVIDENCE)
+           ==================================================================== */}
+      <section className="proof-section section" id="savings">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow dark">04 / PROOF, IN THE DETAILS</div>
+            <h2>
+              Real savings.
+              <br />
+              <em>The whole story.</em>
+            </h2>
+          </div>
+          <p>
+            Completed purchases should show the starting condition, finished result and
+            total amount spent.
+          </p>
+        </div>
+
+        <div className="proof-placeholder">
+          <div className="proof-photos">
+            <div className="photo-box">
+              <span>BEFORE</span>
+              <strong>
+                Purchase photos
+                <br />
+                coming soon
+              </strong>
+            </div>
+            <div className="photo-box">
+              <span>AFTER</span>
+              <strong>
+                Road-ready photos
+                <br />
+                coming soon
+              </strong>
+            </div>
+          </div>
+
+          <div className="proof-copy">
+            <span className="eyebrow dark">VERIFIED CASE STUDIES PENDING</span>
+            <h3>No made-up success stories.</h3>
+            <p>
+              We’ll publish completed purchases with actual before-and-after photos, total
+              spending and comparable market value once the records are available.
+            </p>
+            <Link href={paths.inventory} className="proof-link">
+              <span>Explore the possibilities</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M7 7h10v10" />
+                <path d="M7 17 17 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+           SECTION 6: 05 / PEOPLE BEHIND THE PROCESS (TRUST)
+           ==================================================================== */}
+      <section className="trust-section section" id="trust">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow dark">05 / PEOPLE BEHIND THE PROCESS</div>
+            <h2>
+              Know who’s
+              <br />
+              <em>on your side.</em>
+            </h2>
+          </div>
+          <p>Meet the people helping you turn a wholesale opportunity into your next car.</p>
+        </div>
+
+        <div className="trust-grid">
+          <div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <h3>Business location</h3>
+            <p>Full business address and service area will be added before launch.</p>
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            <h3>Your buying team</h3>
+            <p>Verified team names, roles and photos are awaiting business details.</p>
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+            </svg>
+            <h3>Customer experiences</h3>
+            <p>Real customer reviews will appear here once supplied and approved for publication.</p>
+          </div>
+        </div>
+
+        <div className="contact-strip">
+          <div>
+            <b>Let’s talk about your next car.</b>
+            <p>
+              Business phone and email pending. You can submit a car-specific quote request
+              today.
+            </p>
+          </div>
+          <Link href={paths.inventory} className="btn-contact-choose">
+            <span>Choose a car</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M7 7h10v10" />
+              <path d="M7 17 17 7" />
+            </svg>
+          </Link>
+        </div>
+      </section>
+
+      {/* ====================================================================
+           SECTION 7: YOUR CO-PILOT (AI GUIDE)
+           ==================================================================== */}
+      <section className="guide-section section">
+        <div className="guide-orb-wrap">
+          <div className="guide-orb">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
+            </svg>
+            <span>YOUR CO-PILOT</span>
+          </div>
+        </div>
+
+        <div className="guide-copy">
+          <div className="eyebrow dark">A GREAT PLACE TO START</div>
+          <h2>
+            Questions?
+            <br />
+            <em>Ask AI.</em>
+          </h2>
+          <p>
+            Understand clean titles, narrow your choices and start a quote request for a car
+            you like.
+          </p>
+          <button
+            type="button"
+            className="btn-guide-ask"
+            onClick={handleHeroAskAiClick}
+          >
+            <span>Ask AI</span>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="guide-suggestions">
+          <button
+            type="button"
+            onClick={() => copilotRef.current?.ask("Help me find a car under $20,000.")}
+          >
+            <span>Help me find a car under $20,000.</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M7 7h10v10" />
+              <path d="M7 17 17 7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => copilotRef.current?.ask("What does clean title mean?")}
+          >
+            <span>What does clean title mean?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M7 7h10v10" />
+              <path d="M7 17 17 7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => copilotRef.current?.ask("How do I request a road-ready quote?")}
+          >
+            <span>How do I request a road-ready quote?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M7 7h10v10" />
+              <path d="M7 17 17 7" />
+            </svg>
+          </button>
+          <small>Guided preview · live AI connection pending</small>
+        </div>
+      </section>
+
+      {/* ====================================================================
+           SECTION 8: FAQ ACCORDION (CLEAR ANSWERS)
+           ==================================================================== */}
+      <section className="faq-section section" id="faq">
+        <div>
+          <div className="eyebrow dark">BEFORE YOU TAKE THE WHEEL</div>
+          <h2>
+            Clear answers.
+            <em>No surprises.</em>
+          </h2>
+        </div>
+
+        <div className="faq-accordion-list">
+          {FAQ_ITEMS.map((item, idx) => {
+            const isOpen = !!openFaqs[idx];
+            return (
+              <div key={idx} className={`faq-row ${isOpen ? "open" : ""}`}>
+                <button
+                  type="button"
+                  className="faq-question-btn"
+                  onClick={() => toggleFaq(idx)}
+                  aria-expanded={isOpen}
+                >
+                  <span>{item.q}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    className={`faq-chevron ${isOpen ? "rotated" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                {isOpen && <p className="faq-answer-text">{item.a}</p>}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ====================================================================
+           SECTION 9: FINAL CTA
+           ==================================================================== */}
+      <section className="final-cta">
+        <span>THE ROAD AHEAD IS YOURS.</span>
+        <h2>
+          Find your <em>next car.</em>
+        </h2>
+        <Link href={paths.inventory} className="btn-final-cta">
+          <span>Browse Cars</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M7 7h10v10" />
+            <path d="M7 17 17 7" />
+          </svg>
+        </Link>
+      </section>
+
+      {/* ====================================================================
+           SECTION 10: MINIMALIST FOOTER
+           ==================================================================== */}
+      <footer className="site-footer">
+        <Link href="/" className="footer-logo" aria-label="FairSales Home">
+          <BrandWordmark size="display" />
+        </Link>
+        <p>A smarter way from potential to pavement.</p>
+        <div className="footer-links">
+          <button type="button">Privacy</button>
+          <button type="button">Terms</button>
+          <span>© 2026 FairSales</span>
+        </div>
+      </footer>
+
+      {/* ====================================================================
+           FULL COPILOT DRAWER (AI Vehicle Advisor with Live Search & Bedrock AI)
+           ==================================================================== */}
+      <CopilotDrawer
+        ref={copilotRef}
+        publicDock
+        hideUntilScroll
+        isOpen={isCopilotOpen}
+        onClose={() => setIsCopilotOpen(false)}
+        onOpen={() => setIsCopilotOpen(true)}
+      />
+    </div>
+  );
+}

@@ -22,9 +22,13 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   max-width: 100%;
 }
 

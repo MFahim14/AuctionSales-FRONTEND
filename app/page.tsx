@@ -1,5 +1,10 @@
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { LandingPage } from "@/views/landing/LandingPage";
 
 export default function RootPage() {
-  redirect("/app");
+  return (
+    <Suspense>
+      <LandingPage />
+    </Suspense>
+  );
 }

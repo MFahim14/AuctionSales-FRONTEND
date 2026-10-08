@@ -222,6 +222,9 @@ export type InventoryPage = {
   nextCursor?: string | null;
   limit: number;
   total?: number;
+  totalPages?: number;
+  page?: number;
+  hasMore?: boolean;
 };
 
 export type ScrapeRun = {

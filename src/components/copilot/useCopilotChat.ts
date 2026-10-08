@@ -8,6 +8,9 @@ import {
   fetchCopilotThreadHistory,
   type MatchedVehicle,
 } from "../../api/copilot";
+import { getCurrentUser } from "../../auth/session";
+import { sendPublicCopilotChat } from "../../api/publicCopilot";
+import { SHOWCASE_INVENTORY } from "../../features/inventory/showcaseData";
 
 export interface ChatMessage {
   id: string;
@@ -152,10 +155,11 @@ export function useCopilotChat() {
       }
     }
 
-    // Full Cloud Sync: Fetch user's server-persisted threads from DynamoDB
-    fetchCopilotThreads(30)
-      .then((serverThreads) => {
-        if (!isMounted || !serverThreads || serverThreads.length === 0) return;
+    // Full Cloud Sync: Fetch user's server-persisted threads from DynamoDB only if logged in
+    if (getCurrentUser()) {
+      fetchCopilotThreads(30)
+        .then((serverThreads) => {
+          if (!isMounted || !serverThreads || serverThreads.length === 0) return;
         setThreads((prev) => {
           const localMap = new Map(prev.map((t) => [t.id, t]));
           const merged: ConversationThread[] = [];
@@ -190,6 +194,7 @@ export function useCopilotChat() {
       .catch((err) => {
         console.warn("Cloud sync failed to fetch threads:", err);
       });
+    }
 
     return () => {
       isMounted = false;
@@ -231,7 +236,43 @@ export function useCopilotChat() {
           content: m.content,
         }));
 
-        const response = await sendCopilotChat(payload, currentThreadId);
+        let response;
+        if (getCurrentUser()) {
+          response = await sendCopilotChat(payload, currentThreadId);
+        } else {
+          try {
+            response = await sendPublicCopilotChat(payload, currentThreadId ?? undefined);
+          } catch {
+            const q = trimmed.toLowerCase();
+            const matched = SHOWCASE_INVENTORY.filter((item) => {
+              const str = `${item.year} ${item.make} ${item.model} ${item.bodyStyle} ${item.primaryDamage} ${item.fuelType}`.toLowerCase();
+              return q.split(" ").some((w) => w.length > 2 && str.includes(w));
+            });
+            const topVehicles = matched.length > 0 ? matched.slice(0, 4) : SHOWCASE_INVENTORY.slice(0, 3);
+            const carCards: MatchedVehicle[] = topVehicles.map((v) => ({
+              stockNumber: v.stockNumber,
+              title: v.title,
+              year: v.year,
+              make: v.make,
+              model: v.model,
+              currentBid: v.currentBid,
+              acv: v.acv,
+              spread: (v.acv || 0) - (v.currentBid || 0),
+              primaryDamage: v.primaryDamage,
+              imageUrl: v.imageUrl,
+              auctionDate: v.auctionDate,
+              branch: v.branch,
+            }));
+            const replyText = matched.length > 0
+              ? `I found ${matched.length} live auction lots matching "${trimmed}". Here are top recommendations with inspection details below:`
+              : `Here are our highest-rated live auction lots currently featured on the block. Sign in to place live bids or save custom watchlists!`;
+            response = {
+              reply: replyText,
+              vehicles: carCards,
+              threadId: currentThreadId,
+            };
+          }
+        }
         const resolvedThreadId = response.threadId || currentThreadId;
         if (resolvedThreadId && resolvedThreadId !== currentThreadId) {
           currentThreadId = resolvedThreadId;
