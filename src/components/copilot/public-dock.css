@@ -13,46 +13,52 @@
 }
 
 .copilot-public-pill {
-  background: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
   backdrop-filter: blur(24px) saturate(190%) contrast(102%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(190%) contrast(102%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid #6b5f4e !important;
   box-shadow:
-    0 16px 40px -8px rgba(40, 30, 20, 0.12),
-    0 4px 16px -2px rgba(40, 30, 20, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    0 0 28px 10px rgba(107, 95, 78, 0.2),
+    0 0 64px 22px rgba(107, 95, 78, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 .copilot-public-pill:focus-within {
-  background: rgba(255, 255, 255, 0.88) !important;
-  border-color: rgba(217, 119, 87, 0.6) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: #6b5f4e !important;
   box-shadow:
-    0 20px 48px -8px rgba(217, 119, 87, 0.2),
-    0 4px 20px -2px rgba(40, 30, 20, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    0 0 32px 12px rgba(107, 95, 78, 0.28),
+    0 0 72px 28px rgba(107, 95, 78, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 :root[data-theme="dark"] .copilot-public-pill,
 .dark .copilot-public-pill {
-  background: rgba(18, 20, 26, 0.76) !important;
-  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(22, 24, 30, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.32) !important;
   box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.55),
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 26px rgba(217, 119, 87, 0.18),
+    0 16px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
 }
 
 :root[data-theme="dark"] .copilot-public-pill:focus-within,
 .dark .copilot-public-pill:focus-within {
-  background: rgba(24, 26, 34, 0.9) !important;
-  border-color: rgba(217, 119, 87, 0.5) !important;
+  background: rgba(28, 30, 38, 0.94) !important;
+  border-color: rgba(217, 119, 87, 0.78) !important;
+  box-shadow:
+    0 0 0 3px rgba(217, 119, 87, 0.22),
+    0 0 32px rgba(217, 119, 87, 0.32),
+    0 16px 36px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 .copilot-public-sheet {
-  /* ~28% of the page shows through; blur matches the answer bubble */
-  background: rgba(255, 255, 255, 0.72) !important;
-  backdrop-filter: blur(22px) saturate(170%) contrast(102%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(170%) contrast(102%) !important;
+  /* A little less see-through than the input, with a stronger frost */
+  background: rgba(255, 255, 255, 0.84) !important;
+  backdrop-filter: blur(40px) saturate(180%) contrast(102%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) contrast(102%) !important;
   border: 1px solid rgba(255, 255, 255, 0.78) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
@@ -83,7 +89,9 @@
 
 :root[data-theme="dark"] .copilot-public-sheet,
 .dark .copilot-public-sheet {
-  background: rgba(18, 20, 26, 0.74) !important;
+  background: rgba(18, 20, 26, 0.86) !important;
+  backdrop-filter: blur(40px) saturate(180%) contrast(102%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) contrast(102%) !important;
   border-color: rgba(255, 255, 255, 0.14) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),

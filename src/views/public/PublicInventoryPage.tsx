@@ -10,7 +10,7 @@ import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
 import { PageStepper } from "../../components/PageStepper";
 import { SelectMenu } from "../../components/SelectMenu";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { CopilotDrawer } from "../../components/copilot/CopilotDrawer";
 import { CustomizeListModal } from "../../features/inventory/CustomizeListModal";
 import { InventoryLotList } from "../../features/inventory/InventoryLotRow";
@@ -222,7 +222,7 @@ export function PublicInventoryPage() {
           interestedCount={guestFavorites.length}
         />
 
-        {page.isLoading && !onlyInterested ? <Spinner /> : null}
+        {page.isLoading && !onlyInterested ? <FairOrb state="working" /> : null}
 
         {page.error && !onlyInterested && items.length === 0 ? (
           <Card>
@@ -251,6 +251,7 @@ export function PublicInventoryPage() {
             fields={fields}
             isFavorite={(stockNumber) => guestFavorites.includes(stockNumber)}
             onToggleFavorite={handleToggleFavorite}
+            hrefFor={paths.publicInventoryItem}
           />
         ) : null}
 
@@ -295,7 +296,7 @@ export function PublicInventoryPage() {
             </div>
             <div className="flex flex-col gap-2 pt-2">
               <Link
-                href={`${paths.signIn}?next=/inventory`}
+                href={`${paths.signIn}?next=${encodeURIComponent(paths.publicInventory)}`}
                 className="flex h-10 w-full items-center justify-center rounded-[10px] bg-accent text-[13px] font-medium text-white shadow-sm hover:opacity-95 transition"
               >
                 Sign In / Register

@@ -23,7 +23,6 @@ export function CopilotComposer({
   hasActiveConversation,
   currentWidthClass,
   input,
-  isFocused,
   inputRef,
   animatedPlaceholder,
   onInput,
@@ -39,21 +38,7 @@ export function CopilotComposer({
     return (
       <div
         onClick={onContinue}
-        className={`group flex min-w-[240px] cursor-pointer select-none items-center justify-between gap-3.5 rounded-full px-4 py-2.5 transition-all duration-300 ${
-          publicDock ? "copilot-public-pill" : "border"
-        }`}
-        style={
-          publicDock
-            ? undefined
-            : {
-                background: "var(--glass-pill-bg)",
-                border: "var(--glass-pill-border)",
-                backdropFilter: "blur(28px) saturate(190%)",
-                WebkitBackdropFilter: "blur(28px) saturate(190%)",
-                boxShadow: "var(--glass-pill-shadow)",
-                color: "var(--ink)",
-              }
-        }
+        className="copilot-public-pill group flex min-w-[240px] cursor-pointer select-none items-center justify-between gap-3.5 rounded-full px-4 py-2.5 transition-all duration-300"
       >
         <div className="flex items-center gap-2.5">
           <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-gradient-to-tr from-accent via-[#ce6e42] to-[#e88a59] text-[10px] font-bold text-white shadow-xs">
@@ -83,20 +68,7 @@ export function CopilotComposer({
       }
     >
       <div
-        className={`relative flex items-center overflow-hidden rounded-full py-1 pl-4 pr-1.5 transition-all duration-300 ${
-          publicDock ? "copilot-public-pill" : "border"
-        }`}
-        style={
-          publicDock
-            ? undefined
-            : {
-                background: "var(--glass-pill-bg)",
-                border: "var(--glass-pill-border)",
-                backdropFilter: "blur(28px) saturate(190%)",
-                WebkitBackdropFilter: "blur(28px) saturate(190%)",
-                boxShadow: isFocused ? "var(--glass-pill-shadow-focus)" : "var(--glass-pill-shadow)",
-              }
-        }
+        className="copilot-public-pill relative flex items-center overflow-hidden rounded-full py-1 pl-4 pr-1.5 transition-all duration-300"
       >
         <div className="relative flex flex-1 items-center">
           {publicDock ? (

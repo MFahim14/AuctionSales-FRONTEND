@@ -1,0 +1,270 @@
+.fairsales-landing .five-steps-split {
+  --step-glass: rgba(255, 255, 255, 0.68);
+  --step-glass-hover: rgba(255, 255, 255, 0.82);
+  --step-glass-active: rgba(255, 255, 255, 0.94);
+  --step-line: rgba(230, 223, 216, 0.85);
+  --step-line-active: rgba(196, 103, 58, 0.45);
+  --step-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 8px 24px rgba(60, 45, 30, 0.08);
+  --step-shadow-active:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 16px 40px rgba(60, 45, 30, 0.12),
+    0 0 28px -6px var(--fs-claude-orange-glow);
+  position: relative;
+  z-index: 2;
+  padding: 24px 6% 0;
+  scroll-margin-top: 96px;
+}
+
+[data-theme="dark"] .fairsales-landing .five-steps-split,
+.dark .fairsales-landing .five-steps-split {
+  --step-glass: rgba(24, 24, 23, 0.65);
+  --step-glass-hover: rgba(32, 32, 30, 0.78);
+  --step-glass-active: rgba(38, 37, 34, 0.88);
+  --step-line: rgba(255, 255, 255, 0.09);
+  --step-line-active: rgba(217, 119, 87, 0.5);
+  --step-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 12px 32px rgba(0, 0, 0, 0.4);
+  --step-shadow-active:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 18px 44px rgba(0, 0, 0, 0.55),
+    0 0 32px -6px var(--fs-claude-orange-glow);
+}
+
+.fairsales-landing .five-steps-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.15fr);
+  gap: 72px;
+  align-items: start;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.fairsales-landing .five-steps-sticky {
+  position: sticky;
+  top: max(108px, calc(50vh - 270px));
+  padding-bottom: 48px;
+}
+
+.fairsales-landing .five-steps-eyebrow {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--fs-claude-orange);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+}
+
+.fairsales-landing .five-steps-sticky h2 {
+  margin: 0 0 16px;
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -2px;
+  line-height: 1.08;
+  color: var(--fs-ink);
+}
+
+.fairsales-landing .five-steps-sticky > p {
+  max-width: 360px;
+  margin: 0 0 32px;
+  color: var(--fs-text-sub);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.fairsales-landing .five-steps-pills {
+  display: flex;
+  flex-direction: column;
+}
+
+.fairsales-landing .five-steps-pill {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 13px 20px;
+  border: 1px solid var(--step-line);
+  border-radius: 18px;
+  background: var(--step-glass);
+  box-shadow: var(--step-shadow);
+  color: var(--fs-text-sub);
+  font: 600 15px/1.2 inherit;
+  text-align: left;
+  cursor: pointer;
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    color 0.3s ease;
+}
+
+.fairsales-landing .five-steps-pill span {
+  min-width: 24px;
+  color: var(--fs-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.fairsales-landing .five-steps-pill:hover {
+  background: var(--step-glass-hover);
+  transform: translateX(4px);
+}
+
+.fairsales-landing .five-steps-pill.is-active {
+  background: var(--step-glass-active);
+  border-color: var(--step-line-active);
+  box-shadow: var(--step-shadow-active);
+  color: var(--fs-ink);
+  transform: translateX(10px);
+}
+
+.fairsales-landing .five-steps-pill.is-active span {
+  color: var(--fs-claude-orange);
+}
+
+.fairsales-landing .five-steps-connector {
+  display: block;
+  width: 2px;
+  height: 14px;
+  margin: 4px 0 4px 31px;
+  border-radius: 1px;
+  background: var(--fs-line);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.fairsales-landing .five-steps-connector.is-lit {
+  background: var(--fs-claude-orange);
+  box-shadow: 0 0 8px var(--fs-claude-orange-glow);
+}
+
+.fairsales-landing .five-steps-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+  padding-top: calc(50vh - 40px);
+  padding-bottom: calc(50vh - 40px);
+}
+
+.fairsales-landing .five-steps-card {
+  position: relative;
+  min-height: 220px;
+  padding: 44px 48px;
+  border: 1px solid var(--step-line);
+  border-radius: 28px;
+  background: var(--step-glass);
+  box-shadow: var(--step-shadow);
+  opacity: 0.72;
+  filter: blur(3px);
+  transform: scale(0.99);
+  cursor: pointer;
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  transition:
+    background 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+
+.fairsales-landing .five-steps-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+  pointer-events: none;
+}
+
+.fairsales-landing .five-steps-card.is-active {
+  background: var(--step-glass-active);
+  border-color: var(--step-line-active);
+  box-shadow: var(--step-shadow-active);
+}
+
+.fairsales-landing .five-steps-card > span {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 4px 14px;
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  border-radius: 99px;
+  background: var(--fs-claude-orange-light);
+  color: var(--fs-claude-orange);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.fairsales-landing .five-steps-card h3 {
+  margin: 0 0 12px;
+  color: var(--fs-ink);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+
+.fairsales-landing .five-steps-card p {
+  margin: 0;
+  color: var(--fs-text-sub);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.fairsales-landing .five-steps-card.is-active p {
+  color: var(--fs-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fairsales-landing .five-steps-card,
+  .fairsales-landing .five-steps-pill {
+    transition: none;
+  }
+
+  .fairsales-landing .five-steps-card {
+    filter: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .fairsales-landing .five-steps-split {
+    padding: 72px 5% 24px;
+  }
+
+  .fairsales-landing .five-steps-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .fairsales-landing .five-steps-sticky {
+    position: static;
+    top: auto;
+  }
+
+  .fairsales-landing .five-steps-sticky h2 {
+    font-size: 34px;
+  }
+
+  .fairsales-landing .five-steps-flow {
+    gap: 28px;
+    padding-top: 8px;
+    padding-bottom: 24px;
+  }
+
+  .fairsales-landing .five-steps-card {
+    min-height: 0;
+    padding: 32px;
+    filter: none;
+    opacity: 0.8;
+    transform: none;
+  }
+
+  .fairsales-landing .five-steps-card.is-active {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}

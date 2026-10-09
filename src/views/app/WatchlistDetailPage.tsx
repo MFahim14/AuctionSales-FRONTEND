@@ -8,7 +8,7 @@ import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { Dialog } from "../../components/Dialog";
 import { IconPencil, IconTrash } from "../../components/icons";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { formatChicagoLong, formatWhen } from "../../date/chicago";
 import { FilterSummary } from "../../features/watchlists/FilterSummary";
 import { asTopPicks, TopPicksList } from "../../features/watchlists/TopPicksList";
@@ -57,7 +57,7 @@ export function WatchlistDetailPage() {
   });
 
   if (watchlist.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (watchlist.error) {
     return (

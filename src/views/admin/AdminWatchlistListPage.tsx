@@ -7,7 +7,7 @@ import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
 import { PageStepper } from "../../components/PageStepper";
 import { SelectMenu } from "../../components/SelectMenu";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { PeopleFilter } from "../../features/activity/PeopleFilter";
 import { PAGE_SIZES, type PageSize } from "../../features/inventory/query";
 import { WatchlistTable } from "../../features/watchlists/WatchlistTable";
@@ -71,7 +71,7 @@ export function AdminWatchlistListPage() {
         </div>
         <p className="mt-2 text-sm text-muted">Every desk.</p>
       </div>
-      {watchlists.isLoading ? <Spinner /> : null}
+      {watchlists.isLoading ? <FairOrb state="working" /> : null}
       {watchlists.error ? (
         <Card>
           <p className="text-sm text-danger">{watchlists.error.message}</p>

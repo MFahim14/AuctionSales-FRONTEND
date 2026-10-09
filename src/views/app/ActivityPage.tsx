@@ -6,7 +6,7 @@ import { listHistory } from "../../api/history";
 import { useAuth } from "../../auth/AuthProvider";
 import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { clampToChicagoToday, chicagoTodayDate, formatChicagoLong } from "../../date/chicago";
 import { ActivityPicksModal } from "../../features/activity/ActivityPicksModal";
 import { DateStepper } from "../../features/activity/DateStepper";
@@ -83,7 +83,7 @@ export function ActivityPage() {
         {rows.length} {rows.length === 1 ? "run" : "runs"} · {formatChicagoLong(date)}
         {userIds.length > 0 ? ` · ${userIds.length} ${userIds.length === 1 ? "desk" : "desks"}` : ""}
       </p>
-      {logs.isLoading ? <Spinner /> : null}
+      {logs.isLoading ? <FairOrb state="working" /> : null}
       {logs.error ? (
         <Card>
           <p className="text-sm text-danger">{logs.error.message}</p>

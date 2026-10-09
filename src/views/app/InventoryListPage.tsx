@@ -10,7 +10,7 @@ import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
 import { PageStepper } from "../../components/PageStepper";
 import { SelectMenu } from "../../components/SelectMenu";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { CustomizeListModal } from "../../features/inventory/CustomizeListModal";
 import { FilterLoadModal } from "../../features/inventory/FilterLoadModal";
 import { FilterSaveModal } from "../../features/inventory/FilterSaveModal";
@@ -183,7 +183,7 @@ export function InventoryListPage() {
         onToggleInterested={() => setOnlyInterested((prev) => !prev)}
         interestedCount={favorites.favorites.length}
       />
-      {page.isLoading && !onlyInterested ? <Spinner /> : null}
+      {page.isLoading && !onlyInterested ? <FairOrb state="working" /> : null}
       {page.error && !onlyInterested ? (
         <Card>
           <p className="text-sm text-danger">{page.error.message}</p>

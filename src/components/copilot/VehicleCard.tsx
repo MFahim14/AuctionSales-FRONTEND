@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import type { MatchedVehicle } from "../../api/copilot";
 import { Link, useNavigate } from "@/compat/router";
 import { paths } from "../../routes/paths";
+import { getCurrentUser } from "../../auth/session";
 import { useFavorites } from "../../features/inventory/useFavorites";
 import { ImageGallery } from "../../features/inventory/ImageGallery";
 import { expandVisImages, type VisCandidate } from "../../features/inventory/visImages";
@@ -182,6 +183,9 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   };
 
   const navigate = useNavigate();
+  const inventoryHref = (getCurrentUser() ? paths.inventoryItem : paths.publicInventoryItem)(
+    vehicle.stockNumber,
+  );
 
   const handleOpenGallery = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -192,16 +196,14 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
       setGalleryOpen(true);
     } else {
       markChatNavigating();
-      navigate(paths.inventoryItem(vehicle.stockNumber));
+      navigate(inventoryHref);
     }
   };
-
-  const inventoryHref = paths.inventoryItem(vehicle.stockNumber);
 
   return (
     <>
       <article
-        className="group relative flex flex-col shrink-0 w-[320px] overflow-hidden rounded-2xl border transition-all duration-300 text-left select-none text-[#141413] dark:text-[#f7f6f2] hover:-translate-y-0.5"
+        className="copilot-public-bubble group relative flex flex-col shrink-0 w-[320px] overflow-hidden rounded-2xl border transition-all duration-300 text-left select-none text-[#141413] dark:text-[#f7f6f2] hover:-translate-y-0.5"
         style={{
           background: "var(--glass-card-bg)",
           border: "var(--glass-card-border)",

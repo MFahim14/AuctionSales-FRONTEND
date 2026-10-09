@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { listPresets } from "../../api/presets";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import type { InventoryQuery } from "./query";
 import { recipeToQuery } from "./presetBridge";
 
@@ -22,7 +22,7 @@ export function FilterLoadPanel({
   const rows = watchlists.data ?? [];
 
   if (watchlists.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" place="panel" />;
   }
   if (watchlists.error) {
     return <p className="text-xs text-danger">{watchlists.error.message}</p>;

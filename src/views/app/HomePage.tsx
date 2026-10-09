@@ -9,7 +9,7 @@ import { listPresets } from "../../api/presets";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { chicagoTodayDate } from "../../date/chicago";
 import { watchlistCreateBlock, POLLING_STATUSES } from "../../features/watchlists/helpers";
 import { paths } from "../../routes/paths";
@@ -39,7 +39,7 @@ export function HomePage() {
   const cannotCreate = Boolean(me.data) && block.blocked;
 
   if (me.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (me.error) {
     return (
@@ -75,7 +75,7 @@ export function HomePage() {
               Inventory →
             </Link>
           </div>
-          {inventory.isLoading ? <Spinner /> : null}
+          {inventory.isLoading ? <FairOrb state="working" place="panel" /> : null}
           {!inventory.isLoading && lots.length === 0 ? (
             <p className="text-sm text-muted">No live lots yet.</p>
           ) : (
@@ -92,7 +92,7 @@ export function HomePage() {
                 Presets →
               </Link>
             </div>
-            {watchlists.isLoading ? <Spinner /> : null}
+            {watchlists.isLoading ? <FairOrb state="working" place="panel" /> : null}
             {!watchlists.isLoading && activeRows.length === 0 ? (
               <EmptyState
                 action={
@@ -114,7 +114,7 @@ export function HomePage() {
                 History →
               </Link>
             </div>
-            {logs.isLoading ? <Spinner /> : null}
+            {logs.isLoading ? <FairOrb state="working" place="panel" /> : null}
             {!logs.isLoading && morning.length === 0 ? (
               <p className="text-sm text-muted">No desk runs for this morning.</p>
             ) : (

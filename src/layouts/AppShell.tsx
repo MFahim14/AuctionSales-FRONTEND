@@ -1,6 +1,6 @@
 "use client";
 
-import { NavLink, Outlet, useLocation } from "@/compat/router";
+import { Link, NavLink, Outlet, useLocation } from "@/compat/router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { getMe } from "../api/users";
@@ -86,13 +86,15 @@ export function AppShell({ children }: { children?: ReactNode } = {}) {
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         <div className={`flex shrink-0 items-center ${collapsed ? "justify-center px-0" : "px-2"}`}>
-          {collapsed ? (
-            <span className="brand-wordmark brand-wordmark-header" aria-label="FairSales">
-              <span className="brand-arrow" aria-hidden="true">↗︎</span>
-            </span>
-          ) : (
-            <BrandWordmark />
-          )}
+          <Link href="/" aria-label="FairSales home" className="text-inherit no-underline">
+            {collapsed ? (
+              <span className="brand-wordmark brand-wordmark-header">
+                <span className="brand-arrow" aria-hidden="true">↗︎</span>
+              </span>
+            ) : (
+              <BrandWordmark />
+            )}
+          </Link>
         </div>
         <nav className="mt-7 min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain" aria-label="Primary">
           {appNav.map((item) => (
@@ -198,7 +200,9 @@ export function AppShell({ children }: { children?: ReactNode } = {}) {
                 <path d="M5 7h14M5 12h14M5 17h14" strokeLinecap="round" />
               </svg>
             </button>
-            <BrandWordmark />
+            <Link href="/" aria-label="FairSales home" className="text-inherit no-underline">
+              <BrandWordmark />
+            </Link>
           </div>
           <ThemeCycleButton />
         </header>

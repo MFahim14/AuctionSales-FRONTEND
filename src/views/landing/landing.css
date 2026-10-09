@@ -41,7 +41,8 @@
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease;
 }
 
@@ -581,19 +582,9 @@
 }
 
 .fairsales-landing .intro-link {
-  justify-content: flex-end;
-  align-items: center;
-  gap: 16px;
+  justify-self: end;
+  gap: 12px;
   font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  color: var(--fs-ink);
-  text-decoration: none;
-  transition: color 0.18s ease;
-}
-
-.fairsales-landing .intro-link:hover {
-  color: var(--fs-claude-orange);
 }
 
 .fairsales-landing .intro-link svg {
@@ -622,12 +613,58 @@
   color: var(--fs-ink);
 }
 
-.fairsales-landing .section-heading>p {
+.fairsales-landing .section-heading>p,
+.fairsales-landing .section-heading-aside p {
   color: var(--fs-muted);
   max-width: 320px;
   padding-bottom: 4px;
   font-size: 13.5px;
   line-height: 1.8;
+  margin: 0;
+}
+
+.fairsales-landing .section-heading-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 18px;
+  max-width: 320px;
+  padding-bottom: 4px;
+}
+
+.fairsales-landing .section-heading-aside p {
+  align-self: stretch;
+}
+
+.fairsales-landing .browse-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #000000;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+
+[data-theme="dark"] .fairsales-landing .browse-all-link,
+.dark .fairsales-landing .browse-all-link {
+  color: #ffffff;
+}
+
+.fairsales-landing .browse-all-link:hover {
+  color: var(--fs-claude-orange);
+}
+
+.fairsales-landing .browse-all-link svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  flex-shrink: 0;
 }
 
 .fairsales-landing .eyebrow {
@@ -646,32 +683,6 @@
 /* ==========================================================================
    SECTION 2: INVENTORY / FEATURED CARS
    ========================================================================== */
-.fairsales-landing .featured-label {
-  letter-spacing: 1px;
-  color: var(--fs-muted);
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  font-size: 9.5px;
-  font-weight: 700;
-  display: flex;
-}
-
-.fairsales-landing .featured-label a {
-  letter-spacing: 0;
-  color: var(--fs-ink);
-  align-items: center;
-  gap: 10px;
-  font-size: 12.5px;
-  font-weight: 600;
-  display: flex;
-  text-decoration: none;
-}
-
-.fairsales-landing .featured-label a:hover {
-  color: var(--fs-claude-orange);
-}
-
 .fairsales-landing .car-grid {
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
@@ -882,103 +893,6 @@
 }
 
 /* ==========================================================================
-   SECTION 3: 02 / YOUR FIVE STEPS (THE JOURNEY)
-   ========================================================================== */
-.fairsales-landing .five-steps {
-  grid-template-columns: repeat(5, 1fr);
-  gap: 24px;
-  margin-top: 50px;
-  display: grid;
-}
-
-.fairsales-landing .step-card {
-  border-top: 1px solid var(--fs-line);
-  padding-top: 22px;
-  position: relative;
-}
-
-.fairsales-landing .step-card>span {
-  color: var(--fs-claude-orange);
-  font-family: "Georgia", serif;
-  font-size: 34px;
-  font-style: italic;
-}
-
-.fairsales-landing .step-card>svg {
-  color: var(--fs-muted);
-  position: absolute;
-  top: 28px;
-  right: 0;
-  width: 22px;
-  height: 22px;
-  opacity: 0.6;
-}
-
-.fairsales-landing .step-card h3 {
-  margin-top: 22px;
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--fs-ink);
-}
-
-.fairsales-landing .step-card p {
-  color: var(--fs-muted);
-  margin-top: 12px;
-  font-size: 12.5px;
-  line-height: 1.8;
-}
-
-/* ==========================================================================
-   SECTION 4: 03 / THE VALUE OF A GUIDE (WHY US)
-   ========================================================================== */
-.fairsales-landing .why-section {
-  color: #ffffff;
-  background: #171513;
-}
-
-.fairsales-landing .why-section h2 {
-  color: #ffffff !important;
-}
-
-.fairsales-landing .why-section .section-heading>p {
-  color: #b5b0a8;
-}
-
-.fairsales-landing .why-section .eyebrow {
-  color: var(--fs-claude-orange);
-}
-
-.fairsales-landing .benefit-grid {
-  grid-template-columns: repeat(5, 1fr);
-  gap: 30px;
-  display: grid;
-}
-
-.fairsales-landing .benefit-grid>div {
-  border-top: 1px solid #36322e;
-  padding-top: 22px;
-}
-
-.fairsales-landing .benefit-grid span {
-  color: var(--fs-claude-orange);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.fairsales-landing .benefit-grid h3 {
-  margin: 22px 0 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.fairsales-landing .benefit-grid p {
-  color: #b5b0a8;
-  font-size: 11.5px;
-  line-height: 1.8;
-}
-
-/* ==========================================================================
    SECTION 5: 04 / PROOF, IN THE DETAILS (SAVINGS & EVIDENCE)
    ========================================================================== */
 .fairsales-landing .proof-placeholder {
@@ -1108,22 +1022,10 @@
 }
 
 .fairsales-landing .btn-contact-choose {
-  display: inline-flex;
-  align-items: center;
   gap: 12px;
-  background: var(--fs-ink);
-  color: #ffffff !important;
   padding: 14px 22px;
-  border-radius: 6px;
   font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
   flex-shrink: 0;
-}
-
-.fairsales-landing .btn-contact-choose:hover {
-  background: var(--fs-claude-orange);
 }
 
 .fairsales-landing .btn-contact-choose svg {
@@ -1367,23 +1269,10 @@
 }
 
 .fairsales-landing .btn-final-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--fs-claude-orange);
-  color: #ffffff !important;
+  gap: 14px;
+  padding: 16px 28px;
   font-size: 14px;
   font-weight: 700;
-  padding: 16px 30px;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 6px 20px var(--fs-claude-orange-glow);
-  transition: all 0.22s ease;
-}
-
-.fairsales-landing .btn-final-cta:hover {
-  background: var(--fs-claude-orange-hover);
-  transform: translateY(-2px);
 }
 
 .fairsales-landing .btn-final-cta svg {
@@ -1441,10 +1330,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .fairsales-landing .five-steps,
-  .fairsales-landing .benefit-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 @media (max-width: 900px) {
@@ -1506,11 +1391,6 @@
 
 @media (max-width: 640px) {
   .fairsales-landing .car-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .fairsales-landing .five-steps,
-  .fairsales-landing .benefit-grid {
     grid-template-columns: 1fr;
   }
 

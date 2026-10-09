@@ -6,6 +6,8 @@ import { paths } from "@/routes/paths";
 import { CopilotDrawer, type CopilotDrawerHandle } from "@/components/copilot/CopilotDrawer";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { BrandWordmark } from "@/components/layout/BrandWordmark";
+import { FiveSteps } from "./five-steps/FiveSteps";
+import { GuideValue } from "./guide-value/GuideValue";
 
 interface CarCardItem {
   id: string;
@@ -155,7 +157,7 @@ export function LandingPage() {
             </p>
 
             <div className="hero-buttons-row">
-              <Link href={paths.inventory} className="btn-claude-primary">
+              <Link href={paths.publicInventory} className="btn-claude-primary">
                 <span>Browse Cars</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M7 7h10v10" />
@@ -230,7 +232,7 @@ export function LandingPage() {
           Start with a curated wholesale car. Get an expert opinion and a personalized
           road-ready quote before you make a decision.
         </p>
-        <Link href={paths.inventory} className="intro-link">
+        <Link href={paths.publicInventory} className="intro-link glass-cta">
           <span>Explore inventory</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M7 7h10v10" />
@@ -252,21 +254,19 @@ export function LandingPage() {
               <em>A better opportunity.</em>
             </h2>
           </div>
-          <p>
-            Browse wholesale prices freely. For total repair and road-ready costs, request a
-            personalized quote.
-          </p>
-        </div>
-
-        <div className="featured-label">
-          <span>FEATURED CARS · ILLUSTRATIVE LISTINGS</span>
-          <Link href={paths.inventory}>
-            <span>Browse all cars</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </Link>
+          <div className="section-heading-aside">
+            <Link href={paths.publicInventory} className="browse-all-link">
+              <span>Browse all cars</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </Link>
+            <p>
+              Browse wholesale prices on your own. When you want the full repair and
+              road-ready cost, request a personalized quote.
+            </p>
+          </div>
         </div>
 
         <div className="car-grid featured-grid">
@@ -326,7 +326,7 @@ export function LandingPage() {
                   <p className="availability">{car.availability}</p>
 
                   <div className="card-actions">
-                    <Link href={paths.inventory} className="card-action-view">
+                    <Link href={paths.publicInventory} className="card-action-view">
                       <span>View Details</span>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M5 12h14" />
@@ -357,122 +357,9 @@ export function LandingPage() {
         </p>
       </section>
 
-      {/* ====================================================================
-           SECTION 3: 02 / YOUR FIVE STEPS (THE JOURNEY)
-           ==================================================================== */}
-      <section className="journey-section section" id="journey">
-        <div className="section-heading">
-          <div>
-            <div className="eyebrow dark">02 / YOUR FIVE STEPS</div>
-            <h2>
-              From a good find
-              <br />
-              <em>to a great drive.</em>
-            </h2>
-          </div>
-          <p>One clear path. Expert support. You stay in control of the purchase.</p>
-        </div>
+      <FiveSteps />
 
-        <div className="journey-grid five-steps">
-          <div className="step-card">
-            <span>01</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 8L22 12L18 16" />
-              <path d="M2 12H22" />
-            </svg>
-            <h3>Find your car</h3>
-            <p>Choose from our curated wholesale cars.</p>
-          </div>
-
-          <div className="step-card">
-            <span>02</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 8L22 12L18 16" />
-              <path d="M2 12H22" />
-            </svg>
-            <h3>Get expert advice</h3>
-            <p>Understand the damage, potential and estimated costs.</p>
-          </div>
-
-          <div className="step-card">
-            <span>03</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 8L22 12L18 16" />
-              <path d="M2 12H22" />
-            </svg>
-            <h3>Buy through us</h3>
-            <p>Get help purchasing your chosen wholesale car.</p>
-          </div>
-
-          <div className="step-card">
-            <span>04</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 8L22 12L18 16" />
-              <path d="M2 12H22" />
-            </svg>
-            <h3>Get road-ready</h3>
-            <p>We guide shipping, repairs and registration.</p>
-          </div>
-
-          <div className="step-card">
-            <span>05</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 8L22 12L18 16" />
-              <path d="M2 12H22" />
-            </svg>
-            <h3>Enjoy the ride</h3>
-            <p>Drive the car you wanted at the right price.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-           SECTION 4: 03 / THE VALUE OF A GUIDE (WHY US)
-           ==================================================================== */}
-      <section className="why-section section">
-        <div className="section-heading">
-          <div>
-            <div className="eyebrow dark">03 / THE VALUE OF A GUIDE</div>
-            <h2>
-              More than access.
-              <br />
-              <em>A plan you understand.</em>
-            </h2>
-          </div>
-          <p>
-            Wholesale buying has moving parts. We help you make informed choices at each
-            step.
-          </p>
-        </div>
-
-        <div className="benefit-grid">
-          <div>
-            <span>01</span>
-            <h3>Expert evaluation</h3>
-            <p>A practical opinion on condition, repair scope and purchase potential.</p>
-          </div>
-          <div>
-            <span>02</span>
-            <h3>Wholesale access</h3>
-            <p>Help navigating wholesale opportunities and buying through us.</p>
-          </div>
-          <div>
-            <span>03</span>
-            <h3>Shipping help</h3>
-            <p>Guidance arranging transport to the right destination.</p>
-          </div>
-          <div>
-            <span>04</span>
-            <h3>Repair guidance</h3>
-            <p>Support understanding estimates, repair options and next steps.</p>
-          </div>
-          <div>
-            <span>05</span>
-            <h3>Registration support</h3>
-            <p>Help navigating the documents and local registration process.</p>
-          </div>
-        </div>
-      </section>
+      <GuideValue />
 
       {/* ====================================================================
            SECTION 5: 04 / PROOF, IN THE DETAILS (SAVINGS & EVIDENCE)
@@ -520,7 +407,7 @@ export function LandingPage() {
               We’ll publish completed purchases with actual before-and-after photos, total
               spending and comparable market value once the records are available.
             </p>
-            <Link href={paths.inventory} className="proof-link">
+            <Link href={paths.publicInventory} className="proof-link">
               <span>Explore the possibilities</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M7 7h10v10" />
@@ -581,7 +468,7 @@ export function LandingPage() {
               today.
             </p>
           </div>
-          <Link href={paths.inventory} className="btn-contact-choose">
+          <Link href={paths.publicInventory} className="btn-contact-choose glass-cta">
             <span>Choose a car</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M7 7h10v10" />
@@ -710,7 +597,7 @@ export function LandingPage() {
         <h2>
           Find your <em>next car.</em>
         </h2>
-        <Link href={paths.inventory} className="btn-final-cta">
+        <Link href={paths.publicInventory} className="btn-final-cta glass-cta glass-cta-on-dark">
           <span>Browse Cars</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M7 7h10v10" />

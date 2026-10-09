@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "@/compat/router";
 import { getInventoryItem } from "../../api/inventory";
 import { Card } from "../../components/Card";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { CARD_GROUPS, formatCardValue } from "../../features/inventory/cardFields";
 import { InventoryThumb } from "../../features/inventory/InventoryThumb";
 import { PhonePromptModal } from "../../features/inventory/PhonePromptModal";
@@ -29,7 +29,7 @@ export function InventoryDetailPage() {
   });
 
   if (item.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (item.error || !item.data) {
     return (

@@ -3,14 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getMe } from "../../api/users";
 import { Card } from "../../components/Card";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { EmailOnZeroCard } from "../../features/account/EmailOnZeroCard";
 import { ProfileCard } from "../../features/account/ProfileCard";
 
 export function AccountPage() {
   const me = useQuery({ queryKey: ["me"], queryFn: getMe });
   if (me.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (me.error || !me.data) {
     return (

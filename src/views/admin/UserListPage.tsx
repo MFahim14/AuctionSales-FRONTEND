@@ -9,7 +9,7 @@ import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
 import { Input } from "../../components/Input";
 import { Pill } from "../../components/Pill";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { Table, type Column } from "../../components/Table";
 import { InviteUserModal } from "../../features/users/InviteUserModal";
 import { UserEditModal } from "../../features/users/UserEditModal";
@@ -68,7 +68,7 @@ export function UserListPage() {
         placeholder="Search email or name"
         aria-label="Search users"
       />
-      {users.isLoading ? <Spinner /> : null}
+      {users.isLoading ? <FairOrb state="working" /> : null}
       {users.error ? (
         <Card>
           <p className="text-sm text-danger">{users.error.message}</p>

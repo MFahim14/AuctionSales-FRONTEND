@@ -9,7 +9,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { IconPencil, IconTrash } from "../../components/icons";
 import { IconTool } from "../../components/IconTool";
 import { PowerToggle } from "../../components/PowerToggle";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { Table, type Column } from "../../components/Table";
 import { CrawlHistoryDialog } from "../../features/scrape/CrawlHistoryDialog";
 import { CrawlScheduleDialog, PlusButton, scheduleLabel } from "../../features/scrape/CrawlScheduleDialog";
@@ -102,7 +102,7 @@ export function ScrapeRunListPage() {
           <PlusButton onClick={() => { setError(""); setEditor("new"); }} />
         </div>
       </div>
-      {schedules.isLoading ? <Spinner /> : null}
+      {schedules.isLoading ? <FairOrb state="working" /> : null}
       {schedules.error ? (
         <Card>
           <p className="text-sm text-danger">{schedules.error.message}</p>

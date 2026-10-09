@@ -8,7 +8,7 @@ import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
 import { IconTool } from "../../components/IconTool";
 import { Pill } from "../../components/Pill";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { Table, type Column } from "../../components/Table";
 import { clampToChicagoToday, chicagoTodayDate, formatChicagoLong, formatWhen } from "../../date/chicago";
 import { DateStepper } from "../../features/activity/DateStepper";
@@ -125,7 +125,7 @@ export function FailuresPage() {
           {rows.length} {rows.length === 1 ? "failure" : "failures"} · {formatChicagoLong(date)}
         </p>
       </div>
-      {page.isLoading ? <Spinner /> : null}
+      {page.isLoading ? <FairOrb state="working" /> : null}
       {page.error ? (
         <Card>
           <p className="text-sm text-danger">{page.error.message}</p>

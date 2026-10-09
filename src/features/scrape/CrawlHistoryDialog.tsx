@@ -6,7 +6,7 @@ import { useNavigate } from "@/compat/router";
 import { listScrapeRuns } from "../../api/scrape";
 import { Dialog } from "../../components/Dialog";
 import { EmptyState } from "../../components/EmptyState";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { Table, type Column } from "../../components/Table";
 import { chicagoTodayDate, formatWhen } from "../../date/chicago";
 import { DateStepper } from "../activity/DateStepper";
@@ -49,7 +49,7 @@ export function CrawlHistoryDialog({
         <p className="text-sm text-muted">Runs for the selected day.</p>
         <DateStepper date={day} onChange={setDay} />
       </div>
-      {runs.isLoading ? <Spinner /> : null}
+      {runs.isLoading ? <FairOrb state="working" place="panel" /> : null}
       {runs.error ? <p className="text-sm text-danger">{runs.error.message}</p> : null}
       {!runs.isLoading && rows.length === 0 ? <EmptyState>No scrape for this day.</EmptyState> : null}
       {rows.length > 0 ? (

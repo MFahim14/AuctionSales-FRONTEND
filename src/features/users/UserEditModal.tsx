@@ -8,7 +8,7 @@ import { Dialog } from "../../components/Dialog";
 import { Field } from "../../components/Field";
 import { IconTool } from "../../components/IconTool";
 import { ValueStepper } from "../../components/PageStepper";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { useToast } from "../../components/Toast";
 import type { Role } from "../../types/api";
 import { RoleToggle } from "./RoleToggle";
@@ -137,7 +137,7 @@ export function UserEditModal({
               </IconTool>
             </div>
           </div>
-          {user.isLoading ? <Spinner /> : null}
+          {user.isLoading ? <FairOrb state="working" place="panel" /> : null}
           {user.error ? <p className="mt-4 text-sm text-danger">{user.error.message}</p> : null}
           {user.data ? (
             <form className="mt-5 space-y-4" onSubmit={onSubmit}>

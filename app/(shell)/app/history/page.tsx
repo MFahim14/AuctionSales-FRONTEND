@@ -2,11 +2,11 @@
 
 import { Suspense } from "react";
 import { ActivityPage } from "@/views/app/ActivityPage";
-import { Spinner } from "@/components/Spinner";
+import { FairOrb } from "@/components/orb/FairOrb";
 
 export default function Page() {
   return (
-    <Suspense fallback={<Spinner label="Loading history..." />}>
+    <Suspense fallback={<FairOrb state="working" label="Loading history..." />}>
       <ActivityPage />
     </Suspense>
   );

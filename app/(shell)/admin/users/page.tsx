@@ -2,11 +2,11 @@
 
 import { Suspense } from "react";
 import { UserListPage } from "@/views/admin/UserListPage";
-import { Spinner } from "@/components/Spinner";
+import { FairOrb } from "@/components/orb/FairOrb";
 
 export default function Page() {
   return (
-    <Suspense fallback={<Spinner label="Loading users..." />}>
+    <Suspense fallback={<FairOrb state="working" label="Loading users..." />}>
       <UserListPage />
     </Suspense>
   );

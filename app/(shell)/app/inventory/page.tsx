@@ -2,11 +2,11 @@
 
 import { Suspense } from "react";
 import { InventoryListPage } from "@/views/app/InventoryListPage";
-import { Spinner } from "@/components/Spinner";
+import { FairOrb } from "@/components/orb/FairOrb";
 
 export default function Page() {
   return (
-    <Suspense fallback={<Spinner label="Loading inventory..." />}>
+    <Suspense fallback={<FairOrb state="working" label="Loading inventory..." />}>
       <InventoryListPage />
     </Suspense>
   );

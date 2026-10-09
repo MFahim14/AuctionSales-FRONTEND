@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, type Dispatch, type MouseEvent, type RefObject, type SetStateAction } from "react";
+import { FairOrb } from "../orb/FairOrb";
 import { VehicleCard } from "./VehicleCard";
 import type { MatchedVehicle } from "../../api/copilot";
 import type { ChatMessage, ConversationThread } from "./useCopilotChat";
@@ -86,34 +87,16 @@ export function CopilotSheet({
   messages,
   loading,
   messagesEndRef,
-  publicGlass = false,
 }: CopilotSheetProps) {
   return (
         <div
           role="region"
           aria-label="FairScout.AI Messenger"
-          className={`relative mb-3 flex ${currentWidthClass} h-[520px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-[26px] border animate-in fade-in slide-in-from-bottom-5 duration-300 transition-all ease-out select-text text-[#141413] dark:text-[#f7f6f2] ${
-            publicGlass ? "copilot-public-sheet" : ""
-          }`}
-          style={
-            publicGlass
-              ? undefined
-              : {
-                  background: "var(--glass-drawer-bg)",
-                  backdropFilter: "var(--glass-drawer-blur, blur(52px) saturate(210%))",
-                  WebkitBackdropFilter: "var(--glass-drawer-blur, blur(52px) saturate(210%))",
-                  boxShadow: "var(--glass-drawer-shadow, var(--glass-shadow))",
-                  border: "var(--glass-drawer-border)",
-                  color: "var(--ink)",
-                  transition: "background 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease, box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease",
-                }
-          }
+          className={`copilot-public-sheet relative mb-3 flex ${currentWidthClass} h-[520px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-[26px] border animate-in fade-in slide-in-from-bottom-5 duration-300 transition-all ease-out select-text text-[#141413] dark:text-[#f7f6f2]`}
         >
           {/* Optical Glare & Specular Refraction Overlay */}
           <div
-            className={`copilot-sheet-glare pointer-events-none absolute inset-0 z-0 transition-opacity duration-500 ${
-              publicGlass ? "opacity-0" : "opacity-90 dark:opacity-40"
-            }`}
+            className="copilot-sheet-glare pointer-events-none absolute inset-0 z-0 opacity-0"
             style={{
               background: "var(--glass-drawer-glare)",
             }}
@@ -122,9 +105,7 @@ export function CopilotSheet({
 
           {/* Header Bar */}
           <div
-            className={`relative z-20 flex shrink-0 items-center justify-between border-b px-3.5 py-2.5 transition-all duration-300 ${
-              publicGlass ? "copilot-public-header" : ""
-            }`}
+            className="copilot-public-header relative z-20 flex shrink-0 items-center justify-between border-b px-3.5 py-2.5 transition-all duration-300"
             style={{
               backgroundColor: "var(--glass-header-bg)",
               borderColor: "var(--glass-border-hairline)",
@@ -318,9 +299,7 @@ export function CopilotSheet({
                   <div key={msg.id} className="flex flex-col items-end gap-1">
                     {/* User Message Bubble: Option 4 Peach Prismatic in Light Mode, Smoked Glass in Dark Mode */}
                     <div
-                      className={`max-w-[86%] px-4 py-2.5 text-xs leading-relaxed rounded-[20px] rounded-br-[4px] border transition-all duration-300 ${
-                        publicGlass ? "copilot-public-bubble" : ""
-                      }`}
+                      className="copilot-public-bubble max-w-[86%] px-4 py-2.5 text-xs leading-relaxed rounded-[20px] rounded-br-[4px] border transition-all duration-300"
                       style={{
                         background: "var(--glass-user-bubble-bg)",
                         border: "var(--glass-user-bubble-border)",
@@ -353,9 +332,7 @@ export function CopilotSheet({
 
                     {/* Agent Message Prose Bubble: Pure Frosted Glassmorphism */}
                     <div
-                      className={`max-w-[92%] px-4 py-3 text-xs leading-relaxed rounded-[20px] rounded-tl-[4px] border transition-all duration-300 ${
-                        publicGlass ? "copilot-public-bubble" : ""
-                      }`}
+                      className="copilot-public-bubble max-w-[92%] px-4 py-3 text-xs leading-relaxed rounded-[20px] rounded-tl-[4px] border transition-all duration-300"
                       style={{
                         background: "var(--glass-card-bg)",
                         border: "var(--glass-card-border)",
@@ -379,15 +356,12 @@ export function CopilotSheet({
             )}
 
             {loading && (
-              <div
-                className="flex items-center gap-2 text-xs py-1"
-                style={{ color: "var(--muted)" }}
-              >
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent/20 text-accent animate-spin text-[10px]">
-                  ✦
-                </span>
-                <span>FairScout.AI is scouting wholesale inventory…</span>
-              </div>
+              <FairOrb
+                state="searching"
+                size={20}
+                place="inline"
+                label="FairScout.AI is scouting wholesale inventory…"
+              />
             )}
 
             <div ref={messagesEndRef} />

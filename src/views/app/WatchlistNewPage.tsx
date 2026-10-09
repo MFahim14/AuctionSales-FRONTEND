@@ -7,7 +7,7 @@ import { getRecipe } from "../../api/recipe";
 import { createPreset } from "../../api/presets";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { emptyFormState } from "../../features/watchlists/formState";
 import { watchlistCreateBlock } from "../../features/watchlists/helpers";
 import { RecipeForm } from "../../features/watchlists/RecipeForm";
@@ -21,7 +21,7 @@ export function WatchlistNewPage() {
   const block = watchlistCreateBlock(me.data);
 
   if (me.isLoading || recipe.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (block.blocked) {
     return (

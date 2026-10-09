@@ -6,7 +6,7 @@ import { getMe } from "../../api/users";
 import { getRecipe } from "../../api/recipe";
 import { getPreset, patchPreset } from "../../api/presets";
 import { Card } from "../../components/Card";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { hydrateFormState } from "../../features/watchlists/formState";
 import { RecipeForm } from "../../features/watchlists/RecipeForm";
 import { paths } from "../../routes/paths";
@@ -25,7 +25,7 @@ export function WatchlistEditPage() {
   const queryClient = useQueryClient();
 
   if (watchlist.isLoading || me.isLoading || recipe.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (watchlist.error) {
     return (

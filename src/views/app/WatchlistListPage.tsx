@@ -8,7 +8,7 @@ import { listPresets } from "../../api/presets";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { EmptyState } from "../../components/EmptyState";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { watchlistCreateBlock } from "../../features/watchlists/helpers";
 import { WatchlistTable } from "../../features/watchlists/WatchlistTable";
 import { paths } from "../../routes/paths";
@@ -64,7 +64,7 @@ export function WatchlistListPage() {
           placeholder="Search by name"
         />
       </label>
-      {watchlists.isLoading ? <Spinner /> : null}
+      {watchlists.isLoading ? <FairOrb state="working" /> : null}
       {watchlists.error ? (
         <Card>
           <p className="text-sm text-danger">{watchlists.error.message}</p>

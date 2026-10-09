@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@/compat/router";
 import { getScrapeRun } from "../../api/scrape";
 import { Card } from "../../components/Card";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { formatWhen } from "../../date/chicago";
 import { isHeartbeatStale, RunStatusPill } from "../../features/scrape/RunStatusPill";
 import { paths } from "../../routes/paths";
@@ -27,7 +27,7 @@ export function ScrapeRunDetailPage() {
   });
 
   if (run.isLoading) {
-    return <Spinner />;
+    return <FairOrb state="working" />;
   }
   if (run.error || !run.data) {
     return (

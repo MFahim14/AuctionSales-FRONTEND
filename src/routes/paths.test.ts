@@ -15,6 +15,9 @@ describe("historyLog", () => {
 describe("inventory paths", () => {
   it("encodes stock numbers", () => {
     expect(paths.inventoryItem("12 3")).toBe("/app/inventory/12%203");
+    expect(paths.publicInventoryItem("12 3")).toBe("/inventory/12%203");
+    expect(paths.inventory).toBe("/app/inventory");
+    expect(paths.publicInventory).toBe("/inventory");
   });
 });
 

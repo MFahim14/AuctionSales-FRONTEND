@@ -73,7 +73,7 @@ export function PublicHeader({ mode = "landing" }: PublicHeaderProps) {
             </>
           ) : (
             <>
-              <Link href={paths.inventory} className="opt3-nav-link">
+              <Link href={paths.publicInventory} className="opt3-nav-link">
                 Browse Cars
               </Link>
               <a href="#journey" className="opt3-nav-link">

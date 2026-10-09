@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPreset, listPresets } from "../../api/presets";
 import { IconTool } from "../../components/IconTool";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { Spinner } from "../../components/Spinner";
 import type { InventoryQuery } from "./query";
 import { recipeToQuery } from "./presetBridge";
@@ -74,7 +75,7 @@ export function FilterLoadModal({
           </IconTool>
         </div>
         <div className="mt-5">
-          {watchlists.isLoading ? <Spinner /> : null}
+          {watchlists.isLoading ? <FairOrb state="working" place="panel" /> : null}
           {watchlists.error ? <p className="text-sm text-danger">{watchlists.error.message}</p> : null}
           {detailQuery.error ? <p className="text-sm text-danger">Failed to load filters. Try again.</p> : null}
           {!watchlists.isLoading && active.length === 0 ? (

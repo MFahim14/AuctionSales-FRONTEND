@@ -15,23 +15,29 @@ export function InventoryLotList({
   fields,
   isFavorite,
   onToggleFavorite,
+  hrefFor = paths.inventoryItem,
 }: {
   items: InventoryItem[];
   query: InventoryQuery;
   fields: CardFieldId[];
   isFavorite?: (stockNumber: string) => boolean;
   onToggleFavorite?: (item: InventoryItem) => void;
+  hrefFor?: (stockNumber: string) => string;
 }) {
   const topics = visibleTopics(fields);
   const rest = topics.filter((topic) => topic.id !== "vehicle").length;
   const columns = `10rem minmax(14rem, 1.4fr) repeat(${rest}, minmax(10rem, 1fr))`;
   const suffix = toInventorySearch(query, false).toString();
+  const stockHref = (stockNumber: string) => {
+    const base = hrefFor(stockNumber);
+    return suffix ? `${base}?${suffix}` : base;
+  };
   return (
     <>
       {/* Mobile cards */}
       <ul className="space-y-3 lg:hidden">
         {items.map((item) => {
-          const stockTo = `${paths.inventoryItem(item.stockNumber)}${suffix ? `?${suffix}` : ""}`;
+          const stockTo = stockHref(item.stockNumber);
           const heading = item.title || item.stockNumber;
           const facets = topics
             .flatMap((t) => t.fields)
@@ -98,6 +104,7 @@ export function InventoryLotList({
                   columns={columns}
                   isFavorite={isFavorite}
                   onToggleFavorite={onToggleFavorite}
+                  hrefFor={hrefFor}
                 />
               </li>
             ))}
@@ -137,6 +144,7 @@ export function InventoryLotRow({
   columns,
   isFavorite,
   onToggleFavorite,
+  hrefFor = paths.inventoryItem,
 }: {
   item: InventoryItem;
   query: InventoryQuery;
@@ -144,9 +152,11 @@ export function InventoryLotRow({
   columns: string;
   isFavorite?: (stockNumber: string) => boolean;
   onToggleFavorite?: (item: InventoryItem) => void;
+  hrefFor?: (stockNumber: string) => string;
 }) {
   const suffix = toInventorySearch(query, false).toString();
-  const stockTo = `${paths.inventoryItem(item.stockNumber)}${suffix ? `?${suffix}` : ""}`;
+  const base = hrefFor(item.stockNumber);
+  const stockTo = suffix ? `${base}?${suffix}` : base;
   const heading = item.title || item.stockNumber;
   const titleClass =
     "text-balance font-serif text-[15px] leading-5 tracking-[-0.02em] text-ink hover:text-accent";

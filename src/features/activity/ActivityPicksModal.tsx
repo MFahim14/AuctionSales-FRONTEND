@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { getHistory } from "../../api/history";
 import { Button } from "../../components/Button";
-import { Spinner } from "../../components/Spinner";
+import { FairOrb } from "../../components/orb/FairOrb";
 import { formatChicagoDate, formatClock } from "../../date/chicago";
 import { asTopPicks, TopPicksList } from "../watchlists/TopPicksList";
 
@@ -69,7 +69,7 @@ export function ActivityPicksModal({
           </Button>
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
-          {detail.isLoading ? <Spinner label="Loading picks" /> : null}
+          {detail.isLoading ? <FairOrb state="searching" place="panel" label="Loading picks" /> : null}
           {detail.error ? <p className="text-sm text-danger">{detail.error.message}</p> : null}
           {item && picks.length === 0 && !detail.isLoading ? (
             <p className="rounded-[10px] border border-dashed border-hairline bg-surface-muted px-4 py-8 text-center text-sm text-muted">

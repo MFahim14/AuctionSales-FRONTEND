@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { AppShell } from "@/layouts/AppShell";
 import { RequireAuth } from "@/routes/guards";
-import { Spinner } from "@/components/Spinner";
+import { FairOrb } from "@/components/orb/FairOrb";
 
 export default function ShellLayout({
   children,
@@ -11,7 +11,7 @@ export default function ShellLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={<Spinner label="Loading..." />}>
+    <Suspense fallback={<FairOrb state="working" label="Loading..." />}>
       <RequireAuth>
         <AppShell>{children}</AppShell>
       </RequireAuth>
